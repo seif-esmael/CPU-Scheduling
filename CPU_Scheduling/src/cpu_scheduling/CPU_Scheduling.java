@@ -15,12 +15,33 @@ import java.util.Scanner;
  */
 public class CPU_Scheduling {
     public static class Process {
-        String name;
-        int arrivalTime;
-        int brustTime;
-        int priority;
-        String color;   // Hanesta3meloh ba3den lamma ne3mel el grphical representation
+        private String name;
+        private int arrivalTime;
+        private int brustTime;
+        private int priority;
+        private String color;   // Hanesta3meloh ba3den lamma ne3mel el grphical representation
+        //______________________________________________________________________
+        public String getName() {
+            return name;
+        }
 
+        public int getArrivalTime() {
+            return arrivalTime;
+        }
+
+        public int getBrustTime() {
+            return brustTime;
+        }
+        
+        public int getPriority() {
+            return priority;
+        }
+
+        public String getColor() {
+            return color;
+        }
+
+        //______________________________________________________________________
         public Process(String name, int arrivalTime, int brustTime, int priority) {
             this.name = name;
             this.arrivalTime = arrivalTime;
@@ -31,11 +52,7 @@ public class CPU_Scheduling {
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     public static void SJF(ArrayList<Process> processes,int csTime)
     {
-         processes.sort(Comparator.comparingInt(p -> p.brustTime));
-         for(int i = 0; i < processes.size();i++)
-         {
-             System.out.println(processes.get(i));
-         }       
+         processes.sort(Comparator.comparingInt(p -> p.brustTime));     
          // NOT DONE YET
     }
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
