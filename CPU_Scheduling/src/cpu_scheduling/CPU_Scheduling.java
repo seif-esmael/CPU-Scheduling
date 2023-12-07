@@ -19,6 +19,8 @@ public class CPU_Scheduling {
         private int arrivalTime;
         private int brustTime;
         private int priority;
+        private int waitingTime;
+        private int turnaroundTime;
         private String color;   // Hanesta3meloh ba3den lamma ne3mel el grphical representation
         //______________________________________________________________________
         public String getName() {
@@ -50,10 +52,50 @@ public class CPU_Scheduling {
         }        
     }
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    public static void SJF(ArrayList<Process> processes,int csTime)
-    {
-         processes.sort(Comparator.comparingInt(p -> p.brustTime));     
-         // NOT DONE YET
+    public static void SJF(ArrayList<Process> processes, int csTime) {
+        processes.sort(Comparator.comparingInt(p -> p.getBrustTime()));
+
+        int curr = 0;
+        int totalWait = 0;
+        int totalTurnaround = 0;
+        double avgWait = 0;
+        double avgTurnaround = 0;
+
+        System.out.println("\n(1)Process Execution Order:");
+
+        for (Process p : processes) {
+            if (p.getArrivalTime() > curr) {
+                curr = p.getArrivalTime();
+            }
+            
+            System.out.print(p.getName() + " ");
+            
+            p.waitingTime = curr;
+            curr += p.getBrustTime();
+
+            p.turnaroundTime = curr - p.getArrivalTime();
+
+            curr += csTime;
+
+            totalWait += p.waitingTime;
+            totalTurnaround += p.turnaroundTime;
+        }
+
+
+        avgWait = (double) totalWait / processes.size();
+        avgTurnaround = (double) totalTurnaround / processes.size();
+        
+        System.out.println("\n(2)Waiting Time for Each Process:");
+        for (Process p : processes) {
+            System.out.println(p.getName() + ": " + p.waitingTime);
+        }
+        System.out.println("\n(3)Turnaround Time for Each Process:");
+        for (Process p : processes) {
+            System.out.println(p.getName() + ": " + p.turnaroundTime);
+        }
+
+        System.out.println("\n(4)Average Waiting Time: " + avgWait);
+        System.out.println("(5)Average Turnaround Time: " + avgTurnaround);
     }
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     public static void main(String[] args) {
