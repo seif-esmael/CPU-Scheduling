@@ -29,11 +29,23 @@ public class SJF implements Scheduler {
             curr += csTime;
 
             scheduleData.totalWait += p.getWaitingTime();
-            scheduleData.totalTurnaround += p.getWaitingTime();
+            scheduleData.totalTurnaround += p.getTurnaroundTime();
         }
-
+        System.out.println("\n(2)Waiting Time for Each Process:");
+        for (Process p : processes) {
+            System.out.println(p.getName() + ": " + p.getWaitingTime());
+        }
+        System.out.println("\n(3)Turnaround Time for Each Process:");
+        for (Process p : processes) {
+            System.out.println(p.getName() + ": " + p.getTurnaroundTime());
+        }
+        
         scheduleData.avgWait = (double) scheduleData.totalWait / processes.size();
         scheduleData.avgTurnaround = (double) scheduleData.totalTurnaround / processes.size();
+        
+        System.out.println("Average Turnaround: " + scheduleData.avgTurnaround);
+        System.out.println("Average Waiting Time: " + scheduleData.avgWait);
+        
         scheduleData.processes = processes;
         return scheduleData;
     }
