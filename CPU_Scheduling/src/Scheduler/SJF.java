@@ -39,13 +39,13 @@ public class SJF implements Scheduler {
         for (Process p : processes) {
             System.out.println(p.getName() + ": " + p.getTurnaroundTime());
         }
-        
+
         scheduleData.avgWait = (double) scheduleData.totalWait / processes.size();
         scheduleData.avgTurnaround = (double) scheduleData.totalTurnaround / processes.size();
-        
+
         System.out.println("Average Turnaround: " + scheduleData.avgTurnaround);
         System.out.println("Average Waiting Time: " + scheduleData.avgWait);
-        
+
         scheduleData.processes = processes;
         return scheduleData;
     }
