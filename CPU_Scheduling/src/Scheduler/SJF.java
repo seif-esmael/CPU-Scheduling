@@ -10,9 +10,12 @@ public class SJF implements Scheduler {
 
     @Override
     public ScheduleData schedule(List<Process> processes, int csTime) {
+        
+        List<Process> processesCopy = new ArrayList<>(processes);
         List<Process> processesWithArrivalZero = new ArrayList<>();
         
-        Iterator<Process> iterator = processes.iterator();
+        
+        Iterator<Process> iterator = processesCopy.iterator();
         while (iterator.hasNext()) {
             Process p = iterator.next();
             if (p.getArrivalTime() == 0) {
@@ -21,7 +24,7 @@ public class SJF implements Scheduler {
             }
         }
         processesWithArrivalZero.sort(Comparator.comparingLong(p -> p.getBrustTime()));
-        processes.sort(Comparator.comparingLong(p -> p.getBrustTime()));
+        processesCopy.sort(Comparator.comparingLong(p -> p.getBrustTime()));
 
         int curr = 0;
         ScheduleData scheduleData = new ScheduleData();
@@ -42,7 +45,7 @@ public class SJF implements Scheduler {
             scheduleData.totalTurnaround += p.getTurnaroundTime();
         }
         //_________________________________________________________
-        for (Process p : processes) {
+        for (Process p : processesCopy) {
             if (p.getArrivalTime() > curr) {
                 curr = p.getArrivalTime();
             }
@@ -63,7 +66,7 @@ public class SJF implements Scheduler {
         for (Process p : processesWithArrivalZero) {
             System.out.println(p.getName() + ": " + p.getWaitingTime());
         }
-        for (Process p : processes) {
+        for (Process p : processesCopy) {
             System.out.println(p.getName() + ": " + p.getWaitingTime());
         }
         //------------------------------------------------------------------
@@ -71,17 +74,17 @@ public class SJF implements Scheduler {
         for (Process p : processesWithArrivalZero) {
             System.out.println(p.getName() + ": " + p.getTurnaroundTime());
         }
-        for (Process p : processes) {
+        for (Process p : processesCopy) {
             System.out.println(p.getName() + ": " + p.getTurnaroundTime());
         }        
         //------------------------------------------------------------------                        
-        scheduleData.avgWait = (double) scheduleData.totalWait / (processes.size()+processesWithArrivalZero.size());                        
-        scheduleData.avgTurnaround = (double) scheduleData.totalTurnaround / (processes.size() + processesWithArrivalZero.size());        
+        scheduleData.avgWait = (double) scheduleData.totalWait / (processesCopy.size()+processesWithArrivalZero.size());                        
+        scheduleData.avgTurnaround = (double) scheduleData.totalTurnaround / (processesCopy.size() + processesWithArrivalZero.size());        
                         
         System.out.println("(4)Average Waiting Time: " + scheduleData.avgWait);
         System.out.println("(5)Average Turnaround: " + scheduleData.avgTurnaround);        
         
-        scheduleData.processes = processes;
+        scheduleData.processes = processesCopy;
         return scheduleData;
     }
 
