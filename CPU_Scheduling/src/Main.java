@@ -61,14 +61,15 @@ public class Main {
                 case 3:
                     Scheduler scheduler2 = new PriorityScheduler();
                     scheduler2.schedule(processes, switching_time);
+                    break;
 
                 case 5:
                     exit(0);
+                    break;
                 default:
                     System.out.println("Invalid choice try again!");
             }
-            input.close();
-        }
+        }        
         // ______________________________________________________________________
     }
 }
