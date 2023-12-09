@@ -54,6 +54,7 @@ public class Main {
             System.out.println("Enter which alogorithm you want to apply:\n");
             System.out.println("1- SJF (Shortest-Job_First)\n");
             System.out.println("3- Priority Scheduling\n");
+            System.out.println("4- AG Scheduling :\n");
             System.out.println("5- Exit\n");
             choice_of_algo = input.nextInt();
             switch (choice_of_algo) {
@@ -66,7 +67,14 @@ public class Main {
                     Scheduler scheduler2 = new PriorityScheduler();
                     scheduler2.schedule(processes, switching_time);
                     break;
-
+                case 4:
+                    int q;
+                    System.out.print("Enter Quantum Time: ");
+                    q = input.nextInt();
+                    RR r=new RR();
+                    r.setQuantum(q);
+                    r.schedule(processes,switching_time);
+                    break;
                 case 5:
                     exit(0);
                     break;
