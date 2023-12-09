@@ -72,6 +72,7 @@ public class Main {
         while (true) {
             System.out.println("Enter which alogorithm you want to apply:\n");
             System.out.println("1- SJF (Shortest-Job_First)\n");
+            System.out.println("2- SRTF (Shortest Remaining Time First) \n");
             System.out.println("3- Priority Scheduling\n");
             System.out.println("5- Exit\n");
             choice_of_algo = input.nextInt();
@@ -80,16 +81,18 @@ public class Main {
                 Scheduler scheduler = new SJF();
                 scheduler.schedule(processes, switching_time);
                 break;
-                
-            case 3:
-                Scheduler scheduler2 = new PriorityScheduler();
+            case 2:
+                Scheduler scheduler2 = new SRTF();
                 scheduler2.schedule(processes, switching_time);
+            case 3:
+                Scheduler scheduler3 = new PriorityScheduler();
+                scheduler3.schedule(processes, switching_time);
 
             case 5:
             exit(0);
             default:
             System.out.println("Invalid choice try again!");
-            }            
+            }
         }
  // ______________________________________________________________________
     }
