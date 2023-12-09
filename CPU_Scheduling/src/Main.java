@@ -84,6 +84,7 @@ public class Main {
             case 2:
                 Scheduler scheduler2 = new SRTF();
                 scheduler2.schedule(processes, switching_time);
+                break;
             case 3:
                 Scheduler scheduler3 = new PriorityScheduler();
                 scheduler3.schedule(processes, switching_time);

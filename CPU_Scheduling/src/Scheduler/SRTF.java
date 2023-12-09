@@ -1,7 +1,9 @@
 package Scheduler;
-import Process.Process;
 
+import Scheduler.Scheduler;
+import Process.Process;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class SRTF implements Scheduler {
@@ -10,49 +12,64 @@ public class SRTF implements Scheduler {
     public ScheduleData schedule(List<Process> processes, int csTime) {
         int currentTime = 0;
         int completedProcesses = 0;
-        int minProcessIndex = 0;
-
+        List<Process> readyQueue = new ArrayList<>();
         ScheduleData scheduleData = new ScheduleData();
-        List<Process> Completed = new ArrayList<>();
 
-        while (completedProcesses != processes.size()) {
-            minProcessIndex = -1;
+        while (completedProcesses != processes.size())
+        {
+            System.out.println("Completed Processes: " + completedProcesses + "Process size: " + processes.size());
 
-            for (int i = 0; i < processes.size(); i++) {
-                Process p = processes.get(i);
+//            System.out.println("While loop and process number: " + completedProcesses);
+//            System.out.println("Flag 1");
 
-                if (p.getArrivalTime() <= currentTime && p.getRemainingTime() > 0) {
-                    if (minProcessIndex == -1 || p.getRemainingTime() < processes.get(minProcessIndex).getRemainingTime()) {
-                        minProcessIndex = i;
-                    }
+            for (Process p : processes)
+            {
+                if (p.getArrivalTime() <= currentTime && p.getRemainingTime() > 0)
+                {
+                    readyQueue.add(p);
+                    System.out.println("Flag 2");
+
                 }
             }
 
-            if (minProcessIndex == -1) {
-                currentTime++;
-                continue;
-            }
+            readyQueue.sort(Comparator.comparingInt(p -> p.getRemainingTime()));
 
-            Process currentP = processes.get(minProcessIndex);
-            currentP.setRemainingTime(currentP.getRemainingTime() - 1);
-            currentTime++;
+//            System.out.println("Flag 3");
 
-            if (currentP.getRemainingTime() == 0)
+
+            if (!readyQueue.isEmpty())
             {
-                completedProcesses++;
-                Completed.add(currentP);
-                currentP.setCompletionTime(currentTime);
-                minProcessIndex = -1;
-                currentP.setTurnaroundTime(currentP.getCompletionTime() - currentP.getArrivalTime());
-                currentP.setWaitingTime(currentP.getCompletionTime() - currentP.getArrivalTime() - currentP.getBrustTime());
-                scheduleData.totalTurnaround += currentP.getTurnaroundTime();
-                scheduleData.totalWait += currentP.getWaitingTime();
+                Process shortest = readyQueue.get(0);
+                System.out.println("Executing" + shortest.getName());
+                shortest.setRemainingTime(shortest.getRemainingTime() - 1);
+                currentTime++;
+                System.out.println("Flag 4");
+                if (shortest.getRemainingTime() == 0)
+                {
+                    shortest.setTurnaroundTime(currentTime - shortest.getArrivalTime());
+                    shortest.setWaitingTime(shortest.getTurnaroundTime() - shortest.getBrustTime());
+                    completedProcesses++;
+                    readyQueue.remove(shortest);
 
+                }
             }
+//            System.out.println("Flag 5");
+
+            currentTime++;
+//            System.out.println(currentTime);
         }
-        scheduleData.processes = Completed;
-        scheduleData.avgWait = (double) scheduleData.totalWait / Completed.size();
-        scheduleData.avgTurnaround = (double) scheduleData.totalTurnaround / Completed.size();
+        for (Process p : processes) {
+            scheduleData.totalWait += p.getWaitingTime();
+            scheduleData.totalTurnaround += p.getTurnaroundTime();
+            System.out.println("Flag 6");
+
+        }
+        scheduleData.avgWait = (double) scheduleData.totalWait / processes.size();
+        scheduleData.avgTurnaround = (double) scheduleData.totalTurnaround / processes.size();
+
+        System.out.println("\nAverage Waiting Time: " + scheduleData.avgWait);
+        System.out.println("Average Turnaround Time: " + scheduleData.totalTurnaround);
+        System.out.println("Flag 7");
         return scheduleData;
     }
 }
