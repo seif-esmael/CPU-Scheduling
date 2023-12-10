@@ -1,1 +1,1 @@
-[{"processName":"Process 4","color":"0.8","executionMap":[[2,7]]},{"processName":"Process 1","color":"0.2","executionMap":[[0,1]]},{"processName":"Process 2","color":"0.4","executionMap":[[19,21]]},{"processName":"Process 3","color":"0.6","executionMap":[[22,23]]},{"processName":"Process 0","color":"0.0","executionMap":[[8,18]]}]
+[{"processName":"p3","color":"0.5","executionMap":[[11,12]]},{"processName":"p1","color":"0.0","executionMap":[[0,7]]},{"processName":"p4","color":"0.75","executionMap":[[12,16]]},{"processName":"p2","color":"0.25","executionMap":[[7,11]]}]

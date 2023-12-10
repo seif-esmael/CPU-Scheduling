@@ -52,8 +52,8 @@ public class RR implements Scheduler {
                     int executionTime = Math.min(quantum, burstTimes.get(i));
                     executionMap.putIfAbsent(processes.get(i), new ArrayList<>());
                     executionMap.get(processes.get(i)).add(new ArrayList<>());
-                    executionMap.get(processes.get(i)).getLast().add(timer);
-                    executionMap.get(processes.get(i)).getLast().add(timer + executionTime);
+                    executionMap.get(processes.get(i)).get(executionMap.get(processes.get(i)).size()-1).add(timer);
+                    executionMap.get(processes.get(i)).get(executionMap.get(processes.get(i)).size()-1).add(timer + executionTime);
                     timer += executionTime;
 
                     System.out.println("Context Switch:");

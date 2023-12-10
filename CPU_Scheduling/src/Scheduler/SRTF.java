@@ -39,8 +39,8 @@ public class SRTF implements Scheduler {
                     shortest.setRemainingTime(shortest.getRemainingTime() - 1);
                     executionMap.putIfAbsent(shortest, new ArrayList<>());
                     executionMap.get(shortest).add(new ArrayList<>());
-                    executionMap.get(shortest).getLast().add(currentTime);
-                    executionMap.get(shortest).getLast().add(currentTime + 1);
+                    executionMap.get(shortest).get(executionMap.get(shortest).size()-1).add(currentTime);
+                    executionMap.get(shortest).get(executionMap.get(shortest).size()-1).add(currentTime + 1);
 
                     currentTime++;
                     System.out.println("Updated remaining time of process " + shortest.getName() + " to "

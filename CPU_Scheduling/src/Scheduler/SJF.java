@@ -38,8 +38,8 @@ public class SJF implements Scheduler {
 
             executionMap.put(p, new ArrayList<>());
             executionMap.get(p).add(new ArrayList<>());
-            executionMap.get(p).getLast().add(curr);
-            executionMap.get(p).getLast().add(curr + p.getBrustTime());
+            executionMap.get(p).get(executionMap.get(p).size()-1).add(curr);
+            executionMap.get(p).get(executionMap.get(p).size()-1).add(curr + p.getBrustTime());
 
             System.out.print(p.getName() + " ");
 
@@ -60,8 +60,8 @@ public class SJF implements Scheduler {
 
             executionMap.put(p, new ArrayList<>());
             executionMap.get(p).add(new ArrayList<>());
-            executionMap.get(p).getLast().add(curr);
-            executionMap.get(p).getLast().add(curr + p.getBrustTime());
+            executionMap.get(p).get(executionMap.get(p).size()-1).add(curr);
+            executionMap.get(p).get(executionMap.get(p).size()-1).add(curr + p.getBrustTime());
 
             System.out.print(p.getName() + " ");
 

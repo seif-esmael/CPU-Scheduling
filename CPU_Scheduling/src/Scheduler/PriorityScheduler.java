@@ -70,8 +70,8 @@ public class PriorityScheduler implements Scheduler {
 
                 executionMap.put(currentProcess, new ArrayList<>());
                 executionMap.get(currentProcess).add(new ArrayList<>());
-                executionMap.get(currentProcess).getLast().add(timer);
-                executionMap.get(currentProcess).getLast().add(timer + currentProcess.getBrustTime());
+                executionMap.get(currentProcess).get(executionMap.get(currentProcess).size()-1).add(timer);
+                executionMap.get(currentProcess).get(executionMap.get(currentProcess).size()-1).add(timer + currentProcess.getBrustTime());
                 currentProcess.setWaitingTime(timer - currentProcess.getArrivalTime());
                 timer += currentProcess.getBrustTime();
                 currentProcess.setTurnaroundTime(timer - currentProcess.getArrivalTime());
