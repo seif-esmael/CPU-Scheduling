@@ -1,0 +1,19 @@
+.table {
+    width: 100%;
+}
+
+.table thead{
+    font-weight: bold;
+}
+
+.table thead th{
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+}
+
+.table tbody tr{
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+}
