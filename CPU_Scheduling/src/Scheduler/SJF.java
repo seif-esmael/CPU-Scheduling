@@ -43,9 +43,11 @@ public class SJF implements Scheduler {
 
             System.out.print(p.getName() + " ");
 
-            p.setWaitingTime(curr - p.getArrivalTime());
             curr += p.getBrustTime();
-            p.setTurnaroundTime(p.getBrustTime());
+            p.setTurnaroundTime(curr - p.getArrivalTime());
+            p.setWaitingTime(p.getTurnaroundTime() - p.getBrustTime());
+            
+            
 
             curr += csTime;
 
@@ -65,9 +67,10 @@ public class SJF implements Scheduler {
 
             System.out.print(p.getName() + " ");
 
-            p.setWaitingTime(curr - p.getArrivalTime());
             curr += p.getBrustTime();
-            p.setTurnaroundTime(p.getBrustTime());
+            p.setTurnaroundTime(curr - p.getArrivalTime());
+            p.setWaitingTime(p.getTurnaroundTime() - p.getBrustTime());
+            
 
             curr += csTime;
 

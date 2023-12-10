@@ -48,10 +48,7 @@ public class Main {
             processes.add(new Process(p_name, (float) i / number_of_processes, p_arrivalTime, p_brustTime, p_priority));
             System.out.println("-------------------------------------------");
         }
-        while (true) {
-            for (Process p : processes) {
-                System.out.println("here: " + p.getName());
-            }
+        while (true) {            
             System.out.println("Enter which alogorithm you want to apply:\n");
             System.out.println("1- SJF (Shortest-Job_First)\n");
             System.out.println("2- SRTF\n");
