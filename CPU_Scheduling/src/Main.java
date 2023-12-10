@@ -53,6 +53,7 @@ public class Main {
             }
             System.out.println("Enter which alogorithm you want to apply:\n");
             System.out.println("1- SJF (Shortest-Job_First)\n");
+            System.out.println("2- SRTF (Shortest Remaining Time First) \n");
             System.out.println("3- Priority Scheduling\n");
             System.out.println("4- AG Scheduling :\n");
             System.out.println("5- Exit\n");
@@ -62,7 +63,10 @@ public class Main {
                     Scheduler scheduler = new SJF();
                     scheduler.schedule(processes, switching_time);
                     break;
-
+                case 2:
+                    Scheduler scheduler2 = new SRTF();
+                    scheduler2.schedule(processes, switching_time);
+                    break;
                 case 3:
                     Scheduler scheduler2 = new PriorityScheduler();
                     scheduler2.schedule(processes, switching_time);

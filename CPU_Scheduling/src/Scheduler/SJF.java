@@ -10,6 +10,7 @@ public class SJF implements Scheduler {
 
     @Override
     public ScheduleData schedule(List<Process> processes, int csTime) {
+
         
         List<Process> processesCopy = new ArrayList<>(processes);
         List<Process> processesWithArrivalZero = new ArrayList<>();
@@ -24,6 +25,7 @@ public class SJF implements Scheduler {
             }
         }
         processesWithArrivalZero.sort(Comparator.comparingLong(p -> p.getBrustTime()));
+
         processesCopy.sort(Comparator.comparingLong(p -> p.getBrustTime()));
 
         int curr = 0;
@@ -45,6 +47,7 @@ public class SJF implements Scheduler {
             scheduleData.totalTurnaround += p.getTurnaroundTime();
         }
         //_________________________________________________________
+
         for (Process p : processesCopy) {
             if (p.getArrivalTime() > curr) {
                 curr = p.getArrivalTime();
@@ -74,6 +77,7 @@ public class SJF implements Scheduler {
         for (Process p : processesWithArrivalZero) {
             System.out.println(p.getName() + ": " + p.getTurnaroundTime());
         }
+
         for (Process p : processesCopy) {
             System.out.println(p.getName() + ": " + p.getTurnaroundTime());
         }        
@@ -84,6 +88,7 @@ public class SJF implements Scheduler {
         System.out.println("(4)Average Waiting Time: " + scheduleData.avgWait);
         System.out.println("(5)Average Turnaround: " + scheduleData.avgTurnaround);        
         
+
         scheduleData.processes = processesCopy;
         return scheduleData;
     }
