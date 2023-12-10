@@ -38,12 +38,12 @@ const Gantt = ({ data }: Props) => {
           )
           .flat()
           .sort((a, b) => a[0][0] - b[0][0])
-          .map((exec) => exec[1])
-          .map((processID, index) => (
+          .map((exec, index) => (
             <GanttBar
-              hue={data[processID].color}
-              rowIndex={processID}
+              hue={data[exec[1]].color}
+              rowIndex={exec[1]}
               columnIndex={index}
+              exec={exec[0]}
             />
           ))}
       </GanttGrid>
