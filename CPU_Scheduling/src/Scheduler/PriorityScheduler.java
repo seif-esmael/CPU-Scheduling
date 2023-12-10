@@ -1,9 +1,16 @@
 package Scheduler;
 
 import java.util.AbstractQueue;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Map.Entry;
 
 import Process.Process;
 
@@ -36,8 +43,7 @@ public class PriorityScheduler implements Scheduler {
         // stores data related to the scheduling process
         ScheduleData scheduleData = new ScheduleData();
 
-        System.out.println("(1)Process Execution Order:");
-
+        Map<Process, List<List<Integer>>> executionMap = new HashMap<>();
         // checks to see if we covered all the arrived processes and processed all of
         // them
         for (int i = 0; i < processes.size() || !pq.isEmpty();) {
@@ -53,15 +59,19 @@ public class PriorityScheduler implements Scheduler {
 
             if (!pq.isEmpty()) {
                 Process currentProcess = pq.remove();
-
+                executionMap.put(currentProcess, new ArrayList<>());
                 // prints content of the pq
-                Iterator<Process> it = pq.iterator();
-                it.forEachRemaining(p -> System.out.println(p.getName() + " : " + p.getPriority()));
-                System.out.println("------------------------------");
-                System.out.println("------------------------------");
-                System.out.println(currentProcess.getName() + " Done!");
-                System.out.println("------------------------------");
+                // Iterator<Process> it = pq.iterator();
+                // it.forEachRemaining(p -> System.out.println(p.getName() + " : " +
+                // p.getPriority()));
+                // System.out.println("------------------------------");
+                // System.out.println("------------------------------");
+                // System.out.println(currentProcess.getName() + " Done!");
+                // System.out.println("------------------------------");
 
+                executionMap.get(currentProcess).add(new ArrayList<>());
+                executionMap.get(currentProcess).getLast().add(timer);
+                executionMap.get(currentProcess).getLast().add(timer + currentProcess.getBrustTime());
                 currentProcess.setWaitingTime(timer - currentProcess.getArrivalTime());
                 timer += currentProcess.getBrustTime();
                 currentProcess.setTurnaroundTime(timer - currentProcess.getArrivalTime());
@@ -75,7 +85,7 @@ public class PriorityScheduler implements Scheduler {
         }
         scheduleData.avgWait = (double) scheduleData.totalWait / processes.size();
         scheduleData.avgTurnaround = (double) scheduleData.totalTurnaround / processes.size();
-        scheduleData.processes = processes;
+        scheduleData.executionMap = executionMap;
         return scheduleData;
     }
 }
