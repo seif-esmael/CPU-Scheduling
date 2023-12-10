@@ -166,8 +166,7 @@ public class Main {
     // int q;
     // System.out.print("Enter Quantum Time: ");
     // q = input.nextInt();
-    // scheduler = new RR();
-    // ((RR) scheduler).setQuantum(q);
+    // scheduler = new RR(q);
     // scheduler.schedule(processes, switching_time);
     // FileManager.write("CPU_Scheduling\\GUI\\src\\DB\\schedule.json",
     // data.parse());
@@ -186,7 +185,7 @@ public class Main {
     // }
 
     public static void main(String[] args) {
-        Scheduler scheduler = new RR();
+        Scheduler scheduler = new RR(5);
         ScheduleData data = scheduler.schedule(getTestProcesses(), 1);
         FileManager.write("CPU_Scheduling\\GUI\\src\\DB\\schedule.json",
                 data.parse());

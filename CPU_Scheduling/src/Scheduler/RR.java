@@ -12,7 +12,7 @@ public class RR implements Scheduler {
     private int contextSwitchTime = 2; // Set your context switch time
     private ScheduleData scheduleData = new ScheduleData();
 
-    public void setQuantum(int quantum) {
+    public RR(int quantum) {
         this.quantum = quantum;
     }
 
@@ -27,9 +27,12 @@ public class RR implements Scheduler {
         List<Integer> waitTimes = new ArrayList<>();
         Map<Process, List<List<Integer>>> executionMap = new HashMap<>();
         int timer = 0;
+        List<Integer> turnaround = new ArrayList<>();
+
         // Initialize wait times
         for (int i = 0; i < processes.size(); i++) {
             waitTimes.add(0);
+            turnaround.add(0);
         }
         // ----------------------------------------------------------------------------------------------
         // Calculate burst times
@@ -71,16 +74,22 @@ public class RR implements Scheduler {
             timer++;
         } while (isAnyProcessRemaining(burstTimes));
         // ----------------------------------------------------------------------------------------------
-        System.out.println("\n(2) waiting Time for Each Process:");
+        System.out.println("\n waiting Time and Turnaround Time for Each Process:");
         // Calculate the total and average waiting time
         scheduleData.totalWait = 0;
+        scheduleData.totalTurnaround = 0;
         for (int i = 0; i < processes.size(); i++) {
-            System.out.println("p" + (i + 1) + " " + waitTimes.get(i));
+            System.out.println("p" + (i + 1) + "wait " + waitTimes.get(i)
+                    + " Turnaround: " + (waitTimes.get(i) + processes.get(i).getBrustTime()));
             scheduleData.totalWait += waitTimes.get(i);
+            turnaround.set(i, waitTimes.get(i) + processes.get(i).getBrustTime());
+            scheduleData.totalTurnaround += turnaround.get(i);
         }
 
         scheduleData.avgWait = (double) scheduleData.totalWait / processes.size();
-        System.out.println("(4) Average Waiting Time: " + scheduleData.avgWait);
+        scheduleData.avgTurnaround = (double) scheduleData.totalTurnaround / processes.size();
+        System.out.println(" Average Waiting Time: " + scheduleData.avgWait);
+        System.out.println(" Average Turnaround Time: " + scheduleData.avgTurnaround);
 
         scheduleData.executionMap = executionMap;
         return scheduleData;
