@@ -3,10 +3,12 @@ package Scheduler;
 import Process.Process;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RR implements Scheduler {
-    private int quantum ;
+    private int quantum;
     private int contextSwitchTime = 2; // Set your context switch time
     private ScheduleData scheduleData = new ScheduleData();
 
@@ -23,12 +25,13 @@ public class RR implements Scheduler {
         List<Process> processesCopy = new ArrayList<>(processes);
         List<Integer> burstTimes = new ArrayList<>();
         List<Integer> waitTimes = new ArrayList<>();
-
+        Map<Process, List<List<Integer>>> executionMap = new HashMap<>();
+        int timer = 0;
         // Initialize wait times
         for (int i = 0; i < processes.size(); i++) {
             waitTimes.add(0);
         }
-        //----------------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------------
         // Calculate burst times
         for (Process process : processesCopy) {
             burstTimes.add(process.getBrustTime());
@@ -39,14 +42,16 @@ public class RR implements Scheduler {
             System.out.println(burstTimes.get(i));
         }
 
-
-
         // Schedule processes using Round Robin
         do {
             for (int i = 0; i < processes.size(); i++) {
                 if (burstTimes.get(i) > 0) {
                     int executionTime = Math.min(quantum, burstTimes.get(i));
-
+                    executionMap.putIfAbsent(processes.get(i), new ArrayList<>());
+                    executionMap.get(processes.get(i)).add(new ArrayList<>());
+                    executionMap.get(processes.get(i)).getLast().add(timer);
+                    executionMap.get(processes.get(i)).getLast().add(timer + executionTime);
+                    timer += executionTime;
 
                     System.out.println("Context Switch:");
                     saveState(processes.get(i));
@@ -63,8 +68,9 @@ public class RR implements Scheduler {
                     restoreState(processes.get(i));
                 }
             }
+            timer++;
         } while (isAnyProcessRemaining(burstTimes));
-        //----------------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------------
         System.out.println("\n(2) waiting Time for Each Process:");
         // Calculate the total and average waiting time
         scheduleData.totalWait = 0;
@@ -76,6 +82,7 @@ public class RR implements Scheduler {
         scheduleData.avgWait = (double) scheduleData.totalWait / processes.size();
         System.out.println("(4) Average Waiting Time: " + scheduleData.avgWait);
 
+        scheduleData.executionMap = executionMap;
         return scheduleData;
     }
 
