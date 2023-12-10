@@ -59,16 +59,16 @@ public class PriorityScheduler implements Scheduler {
 
             if (!pq.isEmpty()) {
                 Process currentProcess = pq.remove();
-                executionMap.put(currentProcess, new ArrayList<>());
                 // prints content of the pq
-                // Iterator<Process> it = pq.iterator();
-                // it.forEachRemaining(p -> System.out.println(p.getName() + " : " +
-                // p.getPriority()));
-                // System.out.println("------------------------------");
-                // System.out.println("------------------------------");
-                // System.out.println(currentProcess.getName() + " Done!");
-                // System.out.println("------------------------------");
+                Iterator<Process> it = pq.iterator();
+                it.forEachRemaining(p -> System.out.println(p.getName() + " : " +
+                        p.getPriority()));
+                System.out.println("------------------------------");
+                System.out.println("------------------------------");
+                System.out.println(currentProcess.getName() + " Done!");
+                System.out.println("------------------------------");
 
+                executionMap.put(currentProcess, new ArrayList<>());
                 executionMap.get(currentProcess).add(new ArrayList<>());
                 executionMap.get(currentProcess).getLast().add(timer);
                 executionMap.get(currentProcess).getLast().add(timer + currentProcess.getBrustTime());
@@ -85,6 +85,9 @@ public class PriorityScheduler implements Scheduler {
         }
         scheduleData.avgWait = (double) scheduleData.totalWait / processes.size();
         scheduleData.avgTurnaround = (double) scheduleData.totalTurnaround / processes.size();
+        System.out.println("Average Waiting Time: " + scheduleData.avgWait);
+        System.out.println("Average Turnaround Time: " + scheduleData.avgTurnaround);
+
         scheduleData.executionMap = executionMap;
         return scheduleData;
     }
