@@ -13,30 +13,26 @@ public class SRTF implements Scheduler {
         int completedProcesses = 0;
         List<Process> readyQueue = new ArrayList<>();
         ScheduleData scheduleData = new ScheduleData();
-        Set<String> addedProcessIds = new HashSet<>();
+        Map<String, Integer> waitingTimeMap = new HashMap<>();
 
         while (completedProcesses < processes.size()) {
             System.out.println("Current Time: " + currentTime);
             System.out.println("Completed Processes: " + completedProcesses);
 
-            for (Process p : processes)
-            {
-                if (p.getArrivalTime() <= currentTime && p.getRemainingTime() > 0)
-                {
-                    if (!addedProcessIds.contains(p.getName()))
-                    {
+            for (Process p : processes) {
+                if (p.getArrivalTime() <= currentTime && p.getRemainingTime() > 0) {
+                    if (!readyQueue.contains(p)) {
                         readyQueue.add(p);
-                        addedProcessIds.add(p.getName());
+                        waitingTimeMap.put(p.getName(), 0);
                     }
                 }
             }
-            readyQueue.sort(Comparator.comparingInt(Process::getRemainingTime));
-            for (Process p : readyQueue) {
-                System.out.println("Name: " + p.getName() + ", Arrival Time: " + p.getArrivalTime() + ", Remaining Time: " + p.getRemainingTime());
-            }
+
+            readyQueue.sort(Comparator.comparingInt(p ->
+                    p.getRemainingTime() + waitingTimeMap.getOrDefault(p.getName(), 0)
+            ));
 
             if (!readyQueue.isEmpty()) {
-
                 Process shortest = readyQueue.get(0);
                 System.out.println("Executing process " + shortest.getName());
 
@@ -44,6 +40,12 @@ public class SRTF implements Scheduler {
                     shortest.setRemainingTime(shortest.getRemainingTime() - 1);
                     currentTime++;
                     System.out.println("Updated remaining time of process " + shortest.getName() + " to " + shortest.getRemainingTime());
+                    // Increment waiting time for other processes in the queue
+                    for (Process p : readyQueue) {
+                        if (p != shortest) {
+                            waitingTimeMap.put(p.getName(), waitingTimeMap.getOrDefault(p.getName(), 0) + 1);
+                        }
+                    }
                 }
 
                 if (shortest.getRemainingTime() == 0) {
@@ -51,13 +53,12 @@ public class SRTF implements Scheduler {
                     shortest.setWaitingTime(shortest.getTurnaroundTime() - shortest.getBrustTime());
                     completedProcesses++;
                     readyQueue.remove(shortest);
+                    waitingTimeMap.remove(shortest.getName()); // Remove waiting time for completed process
                     System.out.println("Process " + shortest.getName() + " completed execution");
                     System.out.println("Turnaround Time for " + shortest.getName() + ": " + shortest.getTurnaroundTime());
                     System.out.println("Waiting Time for " + shortest.getName() + ": " + shortest.getWaitingTime());
                 }
-
-            }
-            else {
+            } else {
                 currentTime++;
             }
         }
