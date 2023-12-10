@@ -4,6 +4,7 @@ import Schedule from "./DB/schedule.json";
 
 export interface Process {
   processName: string;
+  priority: Number;
   color: string;
   executionMap: number[][];
 }

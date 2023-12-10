@@ -1,1 +1,1 @@
-[{"processName":"p1","color":"0.0","executionMap":[[0,7]]},{"processName":"p3","color":"0.5","executionMap":[[7,8]]},{"processName":"p2","color":"0.25","executionMap":[[8,12]]},{"processName":"p4","color":"0.75","executionMap":[[12,16]]}]
+[{"processName":"12","priority":"1","color":"0.5","executionMap":[[31,54]]},{"processName":"pq","priority":"3","color":"0.0","executionMap":[[0,2]]}]

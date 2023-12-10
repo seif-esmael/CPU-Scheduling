@@ -53,10 +53,11 @@ const Gantt = ({ data }: Props) => {
         </GanttGrid>
         <SidePanel>
           <DataTable
-            labels={["name", "color"]}
+            labels={["name", "priority", "color"]}
             data={data.map((process) => ({
               name: process.processName,
               color: process.color,
+              priority: process.priority,
             }))}
           />
         </SidePanel>

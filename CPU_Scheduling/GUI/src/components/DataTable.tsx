@@ -3,9 +3,7 @@ import Style from "./DataTable.module.css";
 
 interface Props {
   labels: string[];
-  data: {
-    [key: string]: string;
-  }[];
+  data: {}[];
 }
 
 const DataTable = ({ labels, data }: Props) => {

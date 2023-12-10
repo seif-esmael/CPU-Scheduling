@@ -18,6 +18,7 @@ public class ScheduleData {
         for (Map.Entry<Process, List<List<Integer>>> entry : executionMap.entrySet()) {
             result += "{";
             result += "\"processName\":" + '"' + entry.getKey().getName() + "\",";
+            result += "\"priority\":" + '"' + entry.getKey().getPriority() + "\",";
             result += "\"color\":" + '"' + entry.getKey().getColor() + "\",";
             result += "\"executionMap\":";
             result += "[";
