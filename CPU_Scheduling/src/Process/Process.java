@@ -65,6 +65,7 @@ public class Process {
         this.hsbColorArray[0] = colorHue;
         this.arrivalTime = arrivalTime;
         this.brustTime = brustTime;
+        this.remainingTime = brustTime;
         this.priority = priority;
     }
 }
