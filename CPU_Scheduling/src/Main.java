@@ -185,7 +185,7 @@ public class Main {
     // }
 
     public static void main(String[] args) {
-        Scheduler scheduler = new SJF();
+        Scheduler scheduler = new SRTF();
         ScheduleData data = scheduler.schedule(getTestProcesses(), 1);
         FileManager.write("CPU_Scheduling\\GUI\\src\\DB\\schedule.json",
                 data.parse());

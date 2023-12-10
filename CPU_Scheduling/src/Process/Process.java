@@ -2,7 +2,7 @@ package Process;
 
 public class Process {
     private String name;
-    private float color = 1.0f;
+    private float color;
     private int arrivalTime;
     private int brustTime;
     private int remainingTime;
@@ -52,12 +52,22 @@ public class Process {
     public void setTurnaroundTime(int turnaroundTime) {
         this.turnaroundTime = turnaroundTime;
     }
-    public void setRemainingTime(int time){this.remainingTime = time;}
-    public int getRemainingTime() {return this.remainingTime;}
 
-    public int getCompletionTime() {return this.completionTime;}
-    public void setCompletionTime(int time) {this.completionTime = time;}
+    public void setRemainingTime(int time) {
+        this.remainingTime = time;
+    }
 
+    public int getRemainingTime() {
+        return this.remainingTime;
+    }
+
+    public int getCompletionTime() {
+        return this.completionTime;
+    }
+
+    public void setCompletionTime(int time) {
+        this.completionTime = time;
+    }
 
     // ______________________________________________________________________
     public Process(String name, float color, int arrivalTime, int brustTime, int priority) {
