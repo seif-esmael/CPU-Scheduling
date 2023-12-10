@@ -5,31 +5,8 @@ import java.util.Scanner;
 import Scheduler.*;
 
 public class Main {
-//    public static void main(String[] args) {
-//        Scheduler scheduler = new PriorityScheduler();
-//        ScheduleData data = scheduler.schedule(getTestProcesses(), 1);
-//
-//    }
-//
-//    private static int processComparatorByArrival(Process first, Process second) {
-//        return first.getArrivalTime() - second.getArrivalTime();
-//    }
-//
-//    private static List<Process> getTestProcesses() {
-//        List<Process> processes = new ArrayList<>();
-//
-//        int amount = 20;
-//        for (int i = 0; i < amount; i++) {
-//            processes.add(
-//                    new Process("Process " + i, (float) i / amount, 5 * (i), 10,
-//                            amount - i));
-//        }
-//        processes.sort(Main::processComparatorByArrival);
-//        return processes;
-//    }
-            
     public static void main(String[] args) {
-        //TODO code application logic here
+        // TODO code application logic here
         Scanner input = new Scanner(System.in);
         // ______________________________________________________________________
         // Testing variables
@@ -66,35 +43,73 @@ public class Main {
             System.out.print("priority: ");
             p_priority = input.nextInt();
 
-            processes.add(new Process(p_name,1, p_arrivalTime, p_brustTime, p_priority));
+            processes.add(new Process(p_name, 1, p_arrivalTime, p_brustTime, p_priority));
             System.out.println("-------------------------------------------");
         }
         while (true) {
+            for(Process p: processes)
+            {
+                System.out.println("here: " + p.getName());
+            }
             System.out.println("Enter which alogorithm you want to apply:\n");
             System.out.println("1- SJF (Shortest-Job_First)\n");
             System.out.println("2- SRTF (Shortest Remaining Time First) \n");
             System.out.println("3- Priority Scheduling\n");
+            System.out.println("4- AG Scheduling :\n");
             System.out.println("5- Exit\n");
             choice_of_algo = input.nextInt();
             switch (choice_of_algo) {
-            case 1:
-                Scheduler scheduler = new SJF();
-                scheduler.schedule(processes, switching_time);
-                break;
-            case 2:
-                Scheduler scheduler2 = new SRTF();
-                scheduler2.schedule(processes, switching_time);
-                break;
-            case 3:
-                Scheduler scheduler3 = new PriorityScheduler();
-                scheduler3.schedule(processes, switching_time);
-
-            case 5:
-            exit(0);
-            default:
-            System.out.println("Invalid choice try again!");
+                case 1:
+                    Scheduler scheduler = new SJF();
+                    scheduler.schedule(processes, switching_time);
+                    break;
+                case 2:
+                    Scheduler scheduler2 = new SRTF();
+                    scheduler2.schedule(processes, switching_time);
+                    break;
+                case 3:
+                    Scheduler scheduler2 = new PriorityScheduler();
+                    scheduler2.schedule(processes, switching_time);
+                    break;
+                case 4:
+                    int q;
+                    System.out.print("Enter Quantum Time: ");
+                    q = input.nextInt();
+                    RR r=new RR();
+                    r.setQuantum(q);
+                    r.schedule(processes,switching_time);
+                    break;
+                case 5:
+                    exit(0);
+                    break;
+                default:
+                    System.out.println("Invalid choice try again!");
             }
-        }
- // ______________________________________________________________________
+        }        
+        // ______________________________________________________________________
     }
 }
+
+// public static void main(String[] args) {
+// Scheduler scheduler = new PriorityScheduler();
+// ScheduleData data = scheduler.schedule(getTestProcesses(), 1);
+//
+// }
+//
+// private static int processComparatorByArrival(Process first, Process second)
+// {
+// return first.getArrivalTime() - second.getArrivalTime();
+// }
+//
+// private static List<Process> getTestProcesses() {
+// List<Process> processes = new ArrayList<>();
+//
+// int amount = 20;
+// for (int i = 0; i < amount; i++) {
+// processes.add(
+// new Process("Process " + i, (float) i / amount, 5 * (i), 10,
+// amount - i));
+// }
+// processes.sort(Main::processComparatorByArrival);
+// return processes;
+// }
