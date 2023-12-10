@@ -68,8 +68,8 @@ public class Main {
                     scheduler2.schedule(processes, switching_time);
                     break;
                 case 3:
-                    Scheduler scheduler2 = new PriorityScheduler();
-                    scheduler2.schedule(processes, switching_time);
+                    Scheduler scheduler3 = new PriorityScheduler();
+                    scheduler3.schedule(processes, switching_time);
                     break;
                 case 4:
                     int q;
