@@ -21,38 +21,32 @@ public class Main {
         int p_brustTime;
         int p_priority;
         // // ______________________________________________________________________
-        // System.out.println("What is the number of processes?");
-        // number_of_processes = input.nextInt();
+        System.out.println("What is the number of processes?");
+        number_of_processes = input.nextInt();
 
-        // System.out.println("What is the context switching time?");
-        // switching_time = input.nextInt();
+        System.out.println("What is the context switching time?");
+        switching_time = input.nextInt();
 
         ArrayList<Process> processes = new ArrayList<>();
 
-        // for (int i = 0; i < number_of_processes; i++) {
-        //     System.out.println("\nFor process number " + (i + 1) + ", enter the following data:");
+        for (int i = 0; i < number_of_processes; i++) {
+            System.out.println("\nFor process number " + (i + 1) + ", enter the following data:");
 
-        //     System.out.print("process name: ");
-        //     p_name = input.next();
+            System.out.print("process name: ");
+            p_name = input.next();
 
-        //     System.out.print("arrival time: ");
-        //     p_arrivalTime = input.nextInt();
+            System.out.print("arrival time: ");
+            p_arrivalTime = input.nextInt();
 
-        //     System.out.print("burst time: ");
-        //     p_brustTime = input.nextInt();
+            System.out.print("burst time: ");
+            p_brustTime = input.nextInt();
 
-        //     System.out.print("priority: ");
-        //     p_priority = input.nextInt();
+            System.out.print("priority: ");
+            p_priority = input.nextInt();
 
-        //     processes.add(new Process(p_name, (float) i / number_of_processes, p_arrivalTime, p_brustTime, p_priority));
-        //     System.out.println("-------------------------------------------");
-        // }
-        processes.add(new Process("p0", 1, 3, 7, 1));
-        processes.add(new Process("p1", 1, 5, 10, 1));
-        processes.add(new Process("p2", 1, 10, 2, 1));
-        processes.add(new Process("p3", 1, 6, 9, 1));
-        processes.add(new Process("p4", 1, 1, 5, 1));
-        processes.add(new Process("p5", 1, 4, 6, 1));
+            processes.add(new Process(p_name, (float) i / number_of_processes, p_arrivalTime, p_brustTime, p_priority));
+            System.out.println("-------------------------------------------");
+        }
         while (true) {
             System.out.println("Enter which alogorithm you want to apply:\n");
             System.out.println("1- SJF (Shortest-Job_First)\n");
@@ -66,17 +60,17 @@ public class Main {
             switch (choice_of_algo) {
                 case 1:
                     scheduler = new SJF();
-                    data = scheduler.schedule(processes, 0);
+                    data = scheduler.schedule(processes, switching_time);
                     break;
 
                 case 2:
                     scheduler = new SRTF();
-                    data = scheduler.schedule(processes, 0);
+                    data = scheduler.schedule(processes, switching_time);
                     break;
 
                 case 3:
                     scheduler = new PriorityScheduler();
-                    data = scheduler.schedule(processes, 0);
+                    data = scheduler.schedule(processes, switching_time);
                     break;
 
                 case 4:
@@ -84,7 +78,7 @@ public class Main {
                     System.out.print("Enter Quantum Time: ");
                     q = input.nextInt();
                     scheduler = new RR(q);
-                    data = scheduler.schedule(processes, 0);
+                    data = scheduler.schedule(processes, switching_time);
                     break;
 
                 case 5:
