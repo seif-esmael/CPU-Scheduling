@@ -34,7 +34,7 @@ public class RR implements Scheduler {
             waitTimes.add(0);
             turnaround.add(0);
         }
-        // ----------------------------------------------------------------------------------------------
+        // ---------------------------------------------------------------------------------------------------
         // Calculate burst times
         for (Process process : processesCopy) {
             burstTimes.add(process.getBrustTime());
@@ -44,7 +44,12 @@ public class RR implements Scheduler {
         for (int i = 0; i < processes.size(); i++) {
             System.out.println(burstTimes.get(i));
         }
-
+       //--------------------------------------------------------------------------------------------------------
+        for (int i = 0; i < processes.size(); i++) {
+            int agFactor = calculateAGFactor(processes.get(i));
+            System.out.println("AG-Factor for " + processes.get(i).getName() + ": " + agFactor);
+       }
+      //--------------------------------------------------------------------------------------------------------
         // Schedule processes using Round Robin
         do {
             for (int i = 0; i < processes.size(); i++) {
@@ -110,5 +115,11 @@ public class RR implements Scheduler {
             }
         }
         return false;
+    }
+    private int calculateAGFactor(Process process) {
+        int priority = process.getPriority(); 
+        int randomValue = (int) (Math.random() * 20);
+        int agFactor = Math.max(priority, Math.max(10, randomValue)) + process.getArrivalTime() + process.getBrustTime();
+        return agFactor;
     }
 }
