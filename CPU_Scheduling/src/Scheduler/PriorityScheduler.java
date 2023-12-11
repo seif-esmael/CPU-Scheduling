@@ -68,15 +68,15 @@ public class PriorityScheduler implements Scheduler {
                 executionMap.get(currentProcess).add(new ArrayList<>());
                 executionMap.get(currentProcess).get(executionMap.get(currentProcess).size()-1).add(timer);
                 executionMap.get(currentProcess).get(executionMap.get(currentProcess).size()-1).add(timer + currentProcess.getBrustTime());
-                currentProcess.setWaitingTime(timer - currentProcess.getArrivalTime());
                 timer += currentProcess.getBrustTime();
                 currentProcess.setTurnaroundTime(timer - currentProcess.getArrivalTime());
+                currentProcess.setWaitingTime(currentProcess.getTurnaroundTime() - currentProcess.getBrustTime());
                 pq = reducePriority(pq);
 
                 scheduleData.totalWait += currentProcess.getWaitingTime();
                 scheduleData.totalTurnaround += currentProcess.getTurnaroundTime();
             }
-            timer += csTime;
+            timer++;
 
         }
         scheduleData.avgWait = (double) scheduleData.totalWait / processes.size();
