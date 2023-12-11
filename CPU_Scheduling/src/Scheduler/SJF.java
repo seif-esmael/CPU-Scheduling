@@ -1,109 +1,71 @@
 package Scheduler;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import Process.Process;
 import java.util.ArrayList;
-import java.util.Iterator;
 
-public class SJF implements Scheduler {
-
+public class SJF implements Scheduler {    
     @Override
     public ScheduleData schedule(List<Process> processes, int csTime) {
 
-        List<Process> processesCopy = new ArrayList<>(processes);
-        List<Process> processesWithArrivalZero = new ArrayList<>();
-
-        Iterator<Process> iterator = processesCopy.iterator();
-        while (iterator.hasNext()) {
-            Process p = iterator.next();
-            if (p.getArrivalTime() == 0) {
-                processesWithArrivalZero.add(p);
-                iterator.remove();
-            }
-        }
-        processesWithArrivalZero.sort(Comparator.comparingLong(p -> p.getBrustTime()));
-        processesCopy.sort(Comparator.comparingLong(p -> p.getBrustTime()));
-
-        int curr = 0;
+        List<Process> currprocesses = new ArrayList<>();
+        List<Process> terminated = new ArrayList<>();    
+        int curr=0,n = 0;
+        Process currentProcess;
         ScheduleData scheduleData = new ScheduleData();
 
-        System.out.println("\n(1)Process Execution Order:");
-
-        Map<Process, List<List<Integer>>> executionMap = new HashMap<>();
-        for (Process p : processesWithArrivalZero) {
-
-            executionMap.put(p, new ArrayList<>());
-            executionMap.get(p).add(new ArrayList<>());
-            executionMap.get(p).get(executionMap.get(p).size()-1).add(curr);
-            executionMap.get(p).get(executionMap.get(p).size()-1).add(curr + p.getBrustTime());
-
-            System.out.print(p.getName() + " ");
-
-            curr += p.getBrustTime();
-            p.setTurnaroundTime(curr - p.getArrivalTime());
-            p.setWaitingTime(p.getTurnaroundTime() - p.getBrustTime());
-            
-            
-
-            curr += csTime;
-
-            scheduleData.totalWait += p.getWaitingTime();
-            scheduleData.totalTurnaround += p.getTurnaroundTime();
-        }
-        // _________________________________________________________
-        for (Process p : processesCopy) {
-            if (p.getArrivalTime() > curr) {
-                curr = p.getArrivalTime();
+        while (n < processes.size()) {
+            for (Process p : processes) {
+                if (!p.getCompleted()) {
+                    if (!currprocesses.contains(p)) {
+                        if (p.getArrivalTime() <= curr) {
+                            currprocesses.add(p);
+                        }
+                    }
+                }
             }
-
-            executionMap.put(p, new ArrayList<>());
-            executionMap.get(p).add(new ArrayList<>());
-            executionMap.get(p).get(executionMap.get(p).size()-1).add(curr);
-            executionMap.get(p).get(executionMap.get(p).size()-1).add(curr + p.getBrustTime());
-
+            //_______________________________________________
+            if (!currprocesses.isEmpty()) {
+                currprocesses.sort(Comparator.comparingLong(p -> p.getBrustTime()));
+                currentProcess = currprocesses.get(0);
+                currprocesses.remove(currentProcess);
+                currentProcess.setCompleted(true);
+                curr += currentProcess.getBrustTime();
+                currentProcess.setTurnaroundTime(curr - currentProcess.getArrivalTime());
+                currentProcess.setWaitingTime(currentProcess.getTurnaroundTime() - currentProcess.getBrustTime());
+                terminated.add(currentProcess);
+                n++;
+                curr += csTime;
+            }
+            else
+            {
+                curr++;
+            }                
+        }
+        // ------------------------------------------------------------------
+        System.out.println("(1)Process Execution Order:\n");
+        for (Process p : terminated) {
             System.out.print(p.getName() + " ");
-
-            curr += p.getBrustTime();
-            p.setTurnaroundTime(curr - p.getArrivalTime());
-            p.setWaitingTime(p.getTurnaroundTime() - p.getBrustTime());
-            
-
-            curr += csTime;
-
-            scheduleData.totalWait += p.getWaitingTime();
-            scheduleData.totalTurnaround += p.getTurnaroundTime();
         }
         // ------------------------------------------------------------------
         System.out.println("\n(2)Waiting Time for Each Process:");
-        for (Process p : processesWithArrivalZero) {
+        for (Process p : terminated) {
             System.out.println(p.getName() + ": " + p.getWaitingTime());
-        }
-        for (Process p : processesCopy) {
-            System.out.println(p.getName() + ": " + p.getWaitingTime());
+            scheduleData.totalWait += p.getWaitingTime();
         }
         // ------------------------------------------------------------------
         System.out.println("\n(3)Turnaround Time for Each Process:");
-        for (Process p : processesWithArrivalZero) {
+        for (Process p : terminated) {
             System.out.println(p.getName() + ": " + p.getTurnaroundTime());
-        }
-        for (Process p : processesCopy) {
-            System.out.println(p.getName() + ": " + p.getTurnaroundTime());
+            scheduleData.totalTurnaround += p.getTurnaroundTime();
         }
         // ------------------------------------------------------------------
-        scheduleData.avgWait = (double) scheduleData.totalWait
-                / (processesCopy.size() + processesWithArrivalZero.size());
-        scheduleData.avgTurnaround = (double) scheduleData.totalTurnaround
-                / (processesCopy.size() + processesWithArrivalZero.size());
-
+        scheduleData.avgWait = (double)scheduleData.totalWait/processes.size();
+        scheduleData.avgTurnaround = (double)scheduleData.totalTurnaround/processes.size();
         System.out.println("(4)Average Waiting Time: " + scheduleData.avgWait);
-        System.out.println("(5)Average Turnaround: " + scheduleData.avgTurnaround);
-
-        scheduleData.executionMap = executionMap;
+        System.out.println("(5)Average Turnaround Time: " + scheduleData.avgTurnaround);
         return scheduleData;
     }
-
 }

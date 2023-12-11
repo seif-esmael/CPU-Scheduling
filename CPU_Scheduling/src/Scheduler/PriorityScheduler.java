@@ -7,10 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.Map.Entry;
 
 import Process.Process;
 
@@ -78,7 +74,7 @@ public class PriorityScheduler implements Scheduler {
                 pq = reducePriority(pq);
 
                 scheduleData.totalWait += currentProcess.getWaitingTime();
-                scheduleData.totalTurnaround += currentProcess.getWaitingTime();
+                scheduleData.totalTurnaround += currentProcess.getTurnaroundTime();
             }
             timer += csTime;
 

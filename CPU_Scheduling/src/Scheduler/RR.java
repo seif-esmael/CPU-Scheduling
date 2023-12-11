@@ -48,7 +48,7 @@ public class RR implements Scheduler {
         for (int i = 0; i < processes.size(); i++) {
             int agFactor = calculateAGFactor(processes.get(i));
             System.out.println("AG-Factor for " + processes.get(i).getName() + ": " + agFactor);
-       }
+        }
       //--------------------------------------------------------------------------------------------------------
         // Schedule processes using Round Robin
         do {
@@ -84,8 +84,8 @@ public class RR implements Scheduler {
         scheduleData.totalWait = 0;
         scheduleData.totalTurnaround = 0;
         for (int i = 0; i < processes.size(); i++) {
-            System.out.println("p" + (i + 1) + "wait " + waitTimes.get(i)
-                    + " Turnaround: " + (waitTimes.get(i) + processes.get(i).getBrustTime()));
+            System.out.println("p" + (i + 1) + " wait: " + waitTimes.get(i)
+                    + " ,Turnaround: " + (waitTimes.get(i) + processes.get(i).getBrustTime()));
             scheduleData.totalWait += waitTimes.get(i);
             turnaround.set(i, waitTimes.get(i) + processes.get(i).getBrustTime());
             scheduleData.totalTurnaround += turnaround.get(i);

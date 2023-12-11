@@ -11,6 +11,7 @@ public class Process {
     private int waitingTime;
     private int turnaroundTime;
     private int completionTime;
+    boolean completed = false;
     // ______________________________________________________________________
 
     public String getName() {
@@ -67,6 +68,16 @@ public class Process {
 
     public void setCompletionTime(int time) {
         this.completionTime = time;
+    }
+
+    public void setCompleted(boolean completed)
+    {
+        this.completed = completed;
+    }
+
+    public boolean getCompleted()
+    {
+        return this.completed;
     }
 
     // ______________________________________________________________________
