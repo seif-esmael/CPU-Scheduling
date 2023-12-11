@@ -116,10 +116,66 @@ public class RR implements Scheduler {
         }
         return false;
     }
+/*
+AG factor
+*/
     private int calculateAGFactor(Process process) {
         int priority = process.getPriority(); 
         int randomValue = (int) (Math.random() * 20);
         int agFactor = Math.max(priority, Math.max(10, randomValue)) + process.getArrivalTime() + process.getBrustTime();
         return agFactor;
     }
+    private int calculateAGFactor(Process process) {
+    int priority = process.getPriority();
+    int randomValue = (int) (Math.random() * 20);
+
+    if (randomValue < 10) {
+        return randomValue + process.getArrivalTime() + process.getBrustTime();
+    } else if (randomValue > 10) {
+        return 10 + process.getArrivalTime() + process.getBrustTime();
+    } else {
+        return priority + process.getArrivalTime() + process.getBrustTime();
+    }
+}
+    
+/*
+ Schedule processes using Round Robin
+*/
+    
+do {
+    for (int i = 0; i < processes.size(); i++) {
+        if (burstTimes.get(i) > 0) {
+            int executionTime;
+            if (timer % (quantum / 2) == 0) {
+                // Switch to preemptive AG after 50% of quantum time
+                executionTime = 1;  // Execute for 1 unit of time (preemptive AG)
+            } else {
+                // Non-preemptive AG for the first 50% of quantum time
+                executionTime = Math.min(quantum / 2, burstTimes.get(i));
+            }
+
+            executionMap.putIfAbsent(processes.get(i), new ArrayList<>());
+            executionMap.get(processes.get(i)).add(new ArrayList<>());
+            executionMap.get(processes.get(i)).get(executionMap.get(processes.get(i)).size()-1).add(timer);
+            executionMap.get(processes.get(i)).get(executionMap.get(processes.get(i)).size()-1).add(timer + executionTime);
+            timer += executionTime;
+
+            System.out.println("Context Switch:");
+            saveState(processes.get(i));
+
+            // Execute process for the given time
+            for (int j = 0; j < processes.size(); j++) {
+                if (j != i && burstTimes.get(j) > 0) {
+                    waitTimes.set(j, waitTimes.get(j) + executionTime);
+                }
+            }
+
+            burstTimes.set(i, burstTimes.get(i) - executionTime);
+
+            System.out.println("Context Switch: ");
+            restoreState(processes.get(i));
+        }
+    }
+    timer++;
+} while (isAnyProcessRemaining(burstTimes));
 }
