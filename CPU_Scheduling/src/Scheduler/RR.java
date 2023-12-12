@@ -121,18 +121,7 @@ public class RR implements Scheduler {
         return false;
     }
 
-    private int calculateAGFactor(Process process) {
-        int priority = process.getPriority();
-        int randomValue = (int) (Math.random() * 20);
 
-        if (randomValue < 10) {
-            return randomValue + process.getArrivalTime() + process.getBrustTime();
-        } else if (randomValue > 10) {
-            return 10 + process.getArrivalTime() + process.getBrustTime();
-        } else {
-            return priority + process.getArrivalTime() + process.getBrustTime();
-        }
-    }
 
     public void isReady(List<Process> processesCopy, int currentTime, Queue<Process> readyQueue) {
         List<Process> temp = new ArrayList<>();
