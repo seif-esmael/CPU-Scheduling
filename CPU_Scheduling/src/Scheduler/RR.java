@@ -24,14 +24,14 @@ public class RR implements Scheduler {
         List<Integer> remainingTime = new ArrayList<>();
         List<Process> results = new ArrayList<>();
         List<String> exOrder = new ArrayList<>();
-
+        Map<Process, List<List<Integer>>> executionMap = new HashMap<>();
 
         for (Process p : processesCopy) {
             remainingTime.add(p.getBrustTime());
         }
 
         int currentTime = 0;
-     
+
         processesCopy.sort(Comparator.comparingLong(p -> p.getArrivalTime()));
         currPro = processesCopy.get(0);
         currentTime = currPro.getArrivalTime();
@@ -41,6 +41,10 @@ public class RR implements Scheduler {
         while (!readyQueue.isEmpty() || !processesCopy.isEmpty() || cont) {
             // Add processes that have arrived at the current time to the ready queue
             isReady(processesCopy, currentTime, readyQueue);
+            executionMap.putIfAbsent(currPro, new ArrayList<>());
+            executionMap.get(currPro).add(new ArrayList<>());
+            executionMap.get(currPro).get(executionMap.get(currPro).size() - 1).add(currentTime);
+
             if (currPro.getRemainingTime() - quantum > 0) {
                 currPro.setRemainingTime(currPro.getRemainingTime() - quantum);
                 currentTime += quantum;
@@ -48,10 +52,12 @@ public class RR implements Scheduler {
                 currentTime += currPro.getRemainingTime();
                 currPro.setRemainingTime(0);
             }
+
+            executionMap.get(currPro).get(executionMap.get(currPro).size() - 1).add(currentTime);
             isReady(processesCopy, currentTime, readyQueue);
             if (!readyQueue.isEmpty()) {
                 Process oldPro = currPro;
-                currPro = readyQueue.poll(); //p1
+                currPro = readyQueue.poll(); // p1
                 if (oldPro.getRemainingTime() > 0) {
                     readyQueue.add(oldPro);
 
@@ -95,12 +101,12 @@ public class RR implements Scheduler {
 
         scheduleData.avgWait = (double) scheduleData.totalWait / processes.size();
         scheduleData.avgTurnaround = (double) scheduleData.totalTurnaround / processes.size();
-
+        scheduleData.executionMap = executionMap;
         System.out.println("Total Waiting Time: " + scheduleData.totalWait);
         System.out.println("Total Turnaround Time: " + scheduleData.totalTurnaround);
         System.out.println("Average Waiting Time: " + scheduleData.avgWait);
         System.out.println("Average Turnaround Time: " + scheduleData.avgTurnaround);
-        
+
         for (int i = 0; i < processes.size(); i++) {
             int agFactor = calculateAGFactor(processes.get(i));
             System.out.println("AG-Factor for " + processes.get(i).getName() + ": " + agFactor);
@@ -125,7 +131,6 @@ public class RR implements Scheduler {
         return false;
     }
 
-
     public void isReady(List<Process> processesCopy, int currentTime, Queue<Process> readyQueue) {
         List<Process> temp = new ArrayList<>();
         for (Process p : processesCopy) {
@@ -138,6 +143,7 @@ public class RR implements Scheduler {
             processesCopy.remove(p);
         }
     }
+
     private int calculateAGFactor(Process process) {
         int priority = process.getPriority();
         int randomFunction = (int) (Math.random() * 20);

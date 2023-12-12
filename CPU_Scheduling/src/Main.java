@@ -29,24 +29,30 @@ public class Main {
 
         ArrayList<Process> processes = new ArrayList<>();
 
-        for (int i = 0; i < number_of_processes; i++) {
-            System.out.println("\nFor process number " + (i + 1) + ", enter the following data:");
+        // for (int i = 0; i < number_of_processes; i++) {
+        // System.out.println("\nFor process number " + (i + 1) + ", enter the following
+        // data:");
 
-            System.out.print("process name: ");
-            p_name = input.next();
+        // System.out.print("process name: ");
+        // p_name = input.next();
 
-            System.out.print("arrival time: ");
-            p_arrivalTime = input.nextInt();
+        // System.out.print("arrival time: ");
+        // p_arrivalTime = input.nextInt();
 
-            System.out.print("burst time: ");
-            p_brustTime = input.nextInt();
+        // System.out.print("burst time: ");
+        // p_brustTime = input.nextInt();
 
-            System.out.print("priority: ");
-            p_priority = input.nextInt();
+        // System.out.print("priority: ");
+        // p_priority = input.nextInt();
 
-            processes.add(new Process(p_name, (float) i / number_of_processes, p_arrivalTime, p_brustTime, p_priority));
-            System.out.println("-------------------------------------------");
-        }
+        // processes.add(new Process(p_name, (float) i / number_of_processes,
+        // p_arrivalTime, p_brustTime, p_priority));
+        // System.out.println("-------------------------------------------");
+        // }
+        processes.add(new Process("P1", 0f, 0, 53, 0));
+        processes.add(new Process("P1", 0.25f, 0, 17, 0));
+        processes.add(new Process("P1", 0.5f, 0, 68, 0));
+        processes.add(new Process("P1", 0.75f, 0, 24, 0));
         while (true) {
             System.out.println("Enter which alogorithm you want to apply:\n");
             System.out.println("1- SJF (Shortest-Job_First)\n");
@@ -87,7 +93,8 @@ public class Main {
                 default:
                     System.out.println("Invalid choice try again!");
             }
-            FileManager.write("C:\\Users\\Seif\\Desktop\\CPU-Scheduling\\CPU_Scheduling\\GUI\\src\\DB\\schedule.json", data.parse());
+            FileManager.write("GUI\\src\\DB\\schedule.json",
+                    data.parse());
         }
         // ______________________________________________________________________
     }
