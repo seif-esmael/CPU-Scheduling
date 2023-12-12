@@ -1,7 +1,7 @@
 .bar{
-    border: 2px solid white;
-    border-radius: 4px;
-    height: 4rem;
+    border: var(--bar-border);
+    border-radius: var(--bar-border-radius);
+    height: var(--bar-height);
     position: relative;
 }
 

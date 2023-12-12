@@ -13,4 +13,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    border: var(--bar-border);
+    border-radius: var(--bar-border-radius);
+    height: var(--bar-height);
 }

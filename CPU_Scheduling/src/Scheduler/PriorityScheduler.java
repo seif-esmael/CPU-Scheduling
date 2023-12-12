@@ -32,6 +32,9 @@ public class PriorityScheduler implements Scheduler {
     public ScheduleData schedule(List<Process> processes, int csTime) {
         // instantiates a pq with the priorty comparator
         AbstractQueue<Process> pq = new PriorityQueue<>(this::processComparatorByPriority);
+        List<Integer> processesPriority = new ArrayList<>();
+        for (Process process : processes)
+            processesPriority.add(process.getPriority());
 
         // timer to simulate processes arrival
         int timer = 0;
@@ -80,6 +83,9 @@ public class PriorityScheduler implements Scheduler {
                 timer++;
 
         }
+        for (int i = 0; i < processes.size(); i++)
+            processes.get(i).setPriority(processesPriority.get(i));
+
         scheduleData.avgWait = (double) scheduleData.totalWait / processes.size();
         scheduleData.avgTurnaround = (double) scheduleData.totalTurnaround / processes.size();
         System.out.println("Average Waiting Time: " + scheduleData.avgWait);

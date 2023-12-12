@@ -49,10 +49,17 @@ public class Main {
         // p_arrivalTime, p_brustTime, p_priority));
         // System.out.println("-------------------------------------------");
         // }
-        processes.add(new Process("P1", 0f, 0, 53, 0));
-        processes.add(new Process("P1", 0.25f, 0, 17, 0));
-        processes.add(new Process("P1", 0.5f, 0, 68, 0));
-        processes.add(new Process("P1", 0.75f, 0, 24, 0));
+        processes.add(new Process("P0", 0f, 0, 10, 3));
+        processes.add(new Process("P1", 0.1f, 0, 1, 1));
+        processes.add(new Process("P2", 0.2f, 0, 2, 4));
+        processes.add(new Process("P3", 0.3f, 0, 1, 5));
+        processes.add(new Process("P4", 0.4f, 0, 5, 2));
+        processes.add(new Process("P5", 0.5f, 0, 10, 3));
+        processes.add(new Process("P6", 0.6f, 0, 1, 1));
+        processes.add(new Process("P7", 0.7f, 0, 2, 4));
+        processes.add(new Process("P8", 0.8f, 0, 1, 5));
+        processes.add(new Process("P9", 0.9f, 0, 5, 2));
+
         while (true) {
             System.out.println("Enter which alogorithm you want to apply:\n");
             System.out.println("1- SJF (Shortest-Job_First)\n");
