@@ -87,7 +87,7 @@ public class Main {
                 default:
                     System.out.println("Invalid choice try again!");
             }
-            FileManager.write("CPU_Scheduling\\GUI\\src\\DB\\schedule.json", data.parse());
+            FileManager.write("C:\\Users\\Seif\\Desktop\\CPU-Scheduling\\CPU_Scheduling\\GUI\\src\\DB\\schedule.json", data.parse());
         }
         // ______________________________________________________________________
     }
