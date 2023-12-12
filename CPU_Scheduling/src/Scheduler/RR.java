@@ -140,8 +140,15 @@ public class RR implements Scheduler {
     }
     private int calculateAGFactor(Process process) {
         int priority = process.getPriority();
-        int randomValue = (int) (Math.random() * 20);
-        int agFactor = Math.max(priority, Math.max(10, randomValue)) + process.getArrivalTime() + process.getBrustTime();
+        int randomFunction = (int) (Math.random() * 20);
+        int agFactor;
+        if (randomFunction < 10) {
+            agFactor = randomFunction + process.getArrivalTime() + process.getBrustTime();
+        } else if (randomFunction > 10) {
+            agFactor = 10 + process.getArrivalTime() + process.getBrustTime();
+        } else {
+            agFactor = priority + process.getArrivalTime() + process.getBrustTime();
+        }
         return agFactor;
     }
 }
