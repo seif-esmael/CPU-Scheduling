@@ -31,7 +31,7 @@ public class RR implements Scheduler {
         }
 
         int currentTime = 0;
-
+     
         processesCopy.sort(Comparator.comparingLong(p -> p.getArrivalTime()));
         currPro = processesCopy.get(0);
         currentTime = currPro.getArrivalTime();
@@ -52,9 +52,9 @@ public class RR implements Scheduler {
             if (!readyQueue.isEmpty()) {
                 Process oldPro = currPro;
                 currPro = readyQueue.poll(); //p1
-                int agFactor = calcAgFactor(currPro);
                 if (oldPro.getRemainingTime() > 0) {
                     readyQueue.add(oldPro);
+
                 } else {
                     oldPro.setTurnaroundTime(currentTime - oldPro.getArrivalTime());
                     oldPro.setWaitingTime(oldPro.getTurnaroundTime() - oldPro.getBrustTime());
@@ -100,7 +100,11 @@ public class RR implements Scheduler {
         System.out.println("Total Turnaround Time: " + scheduleData.totalTurnaround);
         System.out.println("Average Waiting Time: " + scheduleData.avgWait);
         System.out.println("Average Turnaround Time: " + scheduleData.avgTurnaround);
-
+        
+        for (int i = 0; i < processes.size(); i++) {
+            int agFactor = calculateAGFactor(processes.get(i));
+            System.out.println("AG-Factor for " + processes.get(i).getName() + ": " + agFactor);
+        }
         return scheduleData;
     }
 
@@ -122,7 +126,6 @@ public class RR implements Scheduler {
     }
 
 
-
     public void isReady(List<Process> processesCopy, int currentTime, Queue<Process> readyQueue) {
         List<Process> temp = new ArrayList<>();
         for (Process p : processesCopy) {
@@ -135,16 +138,10 @@ public class RR implements Scheduler {
             processesCopy.remove(p);
         }
     }
-public int calcAgFactor(Process process){
-    int priority = process.getPriority();
-    int randomValue = (int) (Math.random() * 20);
-
-    // AG-Factor calculation based on the provided equation
-    int agFactor = Math.max(randomValue, Math.max(10, priority)) + process.getArrivalTime() + process.getBrustTime();
-
-    System.out.println("AG-Factor for " + process.getName() + ": " + agFactor);
-
-    return agFactor;
-
-}
+    private int calculateAGFactor(Process process) {
+        int priority = process.getPriority();
+        int randomValue = (int) (Math.random() * 20);
+        int agFactor = Math.max(priority, Math.max(10, randomValue)) + process.getArrivalTime() + process.getBrustTime();
+        return agFactor;
+    }
 }
