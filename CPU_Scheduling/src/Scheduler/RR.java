@@ -33,33 +33,29 @@ public class RR implements Scheduler {
         int currentTime = 0;
 
         processesCopy.sort(Comparator.comparingLong(p -> p.getArrivalTime()));
-        currPro = processesCopy.get(0); 
+        currPro = processesCopy.get(0);
         currentTime = currPro.getArrivalTime();
         processesCopy.remove(currPro);
         boolean cont = false;
         System.out.println("Execution Order:");
-        while (!readyQueue.isEmpty() || !processesCopy.isEmpty()||cont) {
+        while (!readyQueue.isEmpty() || !processesCopy.isEmpty() || cont) {
             // Add processes that have arrived at the current time to the ready queue
-            isReady(processesCopy , currentTime , readyQueue);
-            if(currPro.getRemainingTime() - quantum > 0)
-            {
+            isReady(processesCopy, currentTime, readyQueue);
+            if (currPro.getRemainingTime() - quantum > 0) {
                 currPro.setRemainingTime(currPro.getRemainingTime() - quantum);
                 currentTime += quantum;
-            }
-            else
-            {
+            } else {
                 currentTime += currPro.getRemainingTime();
                 currPro.setRemainingTime(0);
             }
-            isReady(processesCopy , currentTime , readyQueue);
+            isReady(processesCopy, currentTime, readyQueue);
             if (!readyQueue.isEmpty()) {
                 Process oldPro = currPro;
                 currPro = readyQueue.poll(); //p1
+                int agFactor = calcAgFactor(currPro);
                 if (oldPro.getRemainingTime() > 0) {
                     readyQueue.add(oldPro);
-                }
-                else
-                {
+                } else {
                     oldPro.setTurnaroundTime(currentTime - oldPro.getArrivalTime());
                     oldPro.setWaitingTime(oldPro.getTurnaroundTime() - oldPro.getBrustTime());
                     results.add(oldPro);
@@ -67,10 +63,10 @@ public class RR implements Scheduler {
                 exOrder.add(oldPro.getName());
                 currentTime += csTime;
             }
-            if(readyQueue.isEmpty()){
-                if (currPro.getRemainingTime()>0){
+            if (readyQueue.isEmpty()) {
+                if (currPro.getRemainingTime() > 0) {
                     cont = true;
-                }else {
+                } else {
                     cont = false;
                     currPro.setTurnaroundTime(currentTime - currPro.getArrivalTime());
                     currPro.setWaitingTime(currPro.getTurnaroundTime() - currPro.getBrustTime());
@@ -100,6 +96,8 @@ public class RR implements Scheduler {
         scheduleData.avgWait = (double) scheduleData.totalWait / processes.size();
         scheduleData.avgTurnaround = (double) scheduleData.totalTurnaround / processes.size();
 
+        System.out.println("Total Waiting Time: " + scheduleData.totalWait);
+        System.out.println("Total Turnaround Time: " + scheduleData.totalTurnaround);
         System.out.println("Average Waiting Time: " + scheduleData.avgWait);
         System.out.println("Average Turnaround Time: " + scheduleData.avgTurnaround);
 
@@ -136,17 +134,28 @@ public class RR implements Scheduler {
         }
     }
 
-    public void isReady(List<Process> processesCopy,int currentTime,Queue<Process> readyQueue)
-    {
+    public void isReady(List<Process> processesCopy, int currentTime, Queue<Process> readyQueue) {
         List<Process> temp = new ArrayList<>();
-        for (Process p: processesCopy) {
-                if (p.getArrivalTime() <= currentTime) {
-                    readyQueue.add(p);
-                    temp.add(p);
-                }
+        for (Process p : processesCopy) {
+            if (p.getArrivalTime() <= currentTime) {
+                readyQueue.add(p);
+                temp.add(p);
+            }
         }
-        for (Process p: temp) {
-                processesCopy.remove(p);
+        for (Process p : temp) {
+            processesCopy.remove(p);
         }
     }
+public int calcAgFactor(Process process){
+    int priority = process.getPriority();
+    int randomValue = (int) (Math.random() * 20);
+
+    // AG-Factor calculation based on the provided equation
+    int agFactor = Math.max(randomValue, Math.max(10, priority)) + process.getArrivalTime() + process.getBrustTime();
+
+    System.out.println("AG-Factor for " + process.getName() + ": " + agFactor);
+
+    return agFactor;
+
+}
 }
