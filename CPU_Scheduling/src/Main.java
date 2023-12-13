@@ -27,47 +27,38 @@ public class Main {
         System.out.println("What is the context switching time?");
         switching_time = input.nextInt();
 
-        ArrayList<Process> processes = new ArrayList<>();
+        ArrayList<Process> OriginalProcesses = new ArrayList<>();        
+        for (int i = 0; i < number_of_processes; i++) {
+            System.out.println("\nFor process number " + (i + 1) + ", enter the following data:");
 
-        // for (int i = 0; i < number_of_processes; i++) {
-        // System.out.println("\nFor process number " + (i + 1) + ", enter the following
-        // data:");
+            System.out.print("process name: ");
+            p_name = input.next();
 
-        // System.out.print("process name: ");
-        // p_name = input.next();
+            System.out.print("arrival time: ");
+            p_arrivalTime = input.nextInt();
 
-        // System.out.print("arrival time: ");
-        // p_arrivalTime = input.nextInt();
+            System.out.print("burst time: ");
+            p_brustTime = input.nextInt();
 
-        // System.out.print("burst time: ");
-        // p_brustTime = input.nextInt();
+            System.out.print("priority: ");
+            p_priority = input.nextInt();
 
-        // System.out.print("priority: ");
-        // p_priority = input.nextInt();
-
-        // processes.add(new Process(p_name, (float) i / number_of_processes,
-        // p_arrivalTime, p_brustTime, p_priority));
-        // System.out.println("-------------------------------------------");
-        // }
-        processes.add(new Process("P0", 0f, 0, 10, 3));
-        processes.add(new Process("P1", 0.1f, 0, 1, 1));
-        processes.add(new Process("P2", 0.2f, 0, 2, 4));
-        processes.add(new Process("P3", 0.3f, 0, 1, 5));
-        processes.add(new Process("P4", 0.4f, 0, 5, 2));
-        processes.add(new Process("P5", 0.5f, 0, 10, 3));
-        processes.add(new Process("P6", 0.6f, 0, 1, 1));
-        processes.add(new Process("P7", 0.7f, 0, 2, 4));
-        processes.add(new Process("P8", 0.8f, 0, 1, 5));
-        processes.add(new Process("P9", 0.9f, 0, 5, 2));
+            OriginalProcesses.add(new Process(p_name, (float) i / number_of_processes,p_arrivalTime, p_brustTime, p_priority));
+            System.out.println("-------------------------------------------");
+        }
 
         while (true) {
+            ArrayList<Process> processes = new ArrayList<>();
+            for (Process p : OriginalProcesses) {
+                processes.add(new Process(p.getName(), p.getColor(), p.getArrivalTime(), p.getBrustTime(), p.getPriority()));
+            }
             System.out.println("Enter which alogorithm you want to apply:\n");
             System.out.println("1- SJF (Shortest-Job_First)\n");
             System.out.println("2- SRTF\n");
             System.out.println("3- Priority Scheduling\n");
             System.out.println("4- RR (Round Robin)\n");
             System.out.println("5- Exit\n");
-            choice_of_algo = input.nextInt();
+            choice_of_algo = input.nextInt();            
             Scheduler scheduler = null;
             ScheduleData data = null;
             switch (choice_of_algo) {
@@ -100,8 +91,7 @@ public class Main {
                 default:
                     System.out.println("Invalid choice try again!");
             }
-            FileManager.write("GUI\\src\\DB\\schedule.json",
-                    data.parse());
+            FileManager.write("CPU_Scheduling\\GUI\\src\\DB\\schedule.json",data.parse());
         }
         // ______________________________________________________________________
     }
