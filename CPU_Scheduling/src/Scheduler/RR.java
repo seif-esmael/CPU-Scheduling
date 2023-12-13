@@ -114,13 +114,7 @@ public class RR implements Scheduler {
         return scheduleData;
     }
 
-    private void saveState(Process process) {
-        System.out.println("Saving state of process " + process.getName());
-    }
-
-    private void restoreState(Process process) {
-        System.out.println("Restoring state of process " + process.getName());
-    }
+    
 
     private boolean isAnyProcessRemaining(List<Integer> burstTimes) {
         for (int burstTime : burstTimes) {
