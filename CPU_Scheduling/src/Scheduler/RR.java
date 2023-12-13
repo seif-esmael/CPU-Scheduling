@@ -58,30 +58,52 @@ public class RR implements Scheduler {
             if (!readyQueue.isEmpty()) {
                 Process oldPro = currPro;
                 currPro = readyQueue.poll(); // p1
-                if (oldPro.getRemainingTime() > 0) {
-                    readyQueue.add(oldPro);
+                int remainingNonPreemptiveTime = (int) Math.ceil(0.5 * quantum);
+            if (currPro.getRemainingTime() <= remainingNonPreemptiveTime) {
+                currPro.setRemainingTime(0);
+                currentTime += currPro.getRemainingTime();
+            } else {
+                currPro.setRemainingTime(currPro.getRemainingTime() - remainingNonPreemptiveTime);
+                currentTime += remainingNonPreemptiveTime;
 
-                } else {
-                    oldPro.setTurnaroundTime(currentTime - oldPro.getArrivalTime());
-                    oldPro.setWaitingTime(oldPro.getTurnaroundTime() - oldPro.getBrustTime());
-                    results.add(oldPro);
-                }
-                exOrder.add(oldPro.getName());
-                currentTime += csTime;
-            }
-            if (readyQueue.isEmpty()) {
-                if (currPro.getRemainingTime() > 0) {
-                    cont = true;
-                } else {
-                    cont = false;
-                    currPro.setTurnaroundTime(currentTime - currPro.getArrivalTime());
-                    currPro.setWaitingTime(currPro.getTurnaroundTime() - currPro.getBrustTime());
-                    results.add(currPro);
-                    exOrder.add(currPro.getName());
+                // Convert to preemptive AG
+                while (!readyQueue.isEmpty()) {
+                    Process oldPro = currPro;
+                    currPro = readyQueue.poll();
+                    if (oldPro.getRemainingTime() > 0) {
+                        readyQueue.add(oldPro);
+                        break; // Break the loop to allow non-preemptive AG for other processes
+                    } else {
+                        oldPro.setTurnaroundTime(currentTime - oldPro.getArrivalTime());
+                        oldPro.setWaitingTime(oldPro.getTurnaroundTime() - oldPro.getBrustTime());
+                        results.add(oldPro);
+                    }
+                    exOrder.add(oldPro.getName());
+                    currentTime += csTime;
                 }
             }
-        }
-        // Display Execution Order
+if (currPro.getRemainingTime() > 0) {
+                if (currPro.getRemainingTime() == quantum) {
+                    // Scenario i: Process used all its quantum time but still has job to do
+                    readyQueue.add(currPro);
+                    int newQuantum = (int) Math.ceil(1.1 * quantum); // Increase quantum time
+                    currPro.setQuantum(newQuantum);
+                } else {
+                    // Scenario ii: Process didn't use all its quantum time
+                    readyQueue.add(currPro);
+                    int remainingUnusedTime = quantum - currPro.getRemainingTime();
+                    currPro.setQuantum(currPro.getQuantum() + remainingUnusedTime);
+                }
+            } else {
+                // Scenario iii: Process finished its job
+                currPro.setQuantum(0);
+                readyQueue.remove(currPro);
+                currPro.setTurnaroundTime(currentTime - currPro.getArrivalTime());
+                currPro.setWaitingTime(currPro.getTurnaroundTime() - currPro.getBrustTime());
+                results.add(currPro);
+                exOrder.add(currPro.getName());
+            }
+            
         for (String string : exOrder) {
             System.out.print(string + " ");
         }
