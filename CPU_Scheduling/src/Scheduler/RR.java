@@ -17,10 +17,28 @@ public class RR implements Scheduler {
         return quantum;
     }
 
+    private List<Process> makeCopy(List<Process> toBeCopied){
+        List<Process> copy = new ArrayList<>();
+        for (Process p:toBeCopied){
+            Process temp = new Process(p.getName(), p.getColor(), p.getArrivalTime(), p.getBrustTime(), p.getPriority());
+            copy.add(temp);
+        }
+        return copy;
+    }
+
+    private int search(Process p, List<Process> list){
+        for (int i = 0; i < list.size(); i++) {
+            if (p.getName().equals(list.get(i).getName())){
+                return i;
+            }
+        }
+        return -1;
+    }
+
     @Override
     public ScheduleData schedule(List<Process> processes, int csTime) {
-        List<Process> processesCopy = new ArrayList<>(processes);
-        List<Process> QuantumList = new ArrayList<>(processes);
+        List<Process> processesCopy = makeCopy(processes);
+        List<Process> QuantumList = makeCopy(processesCopy);
         Queue<Process> readyQueue = new LinkedList<>();
         List<Integer> remainingTime = new ArrayList<>();
         List<Process> results = new ArrayList<>();
@@ -49,21 +67,18 @@ public class RR implements Scheduler {
             processesCopy.get(i).setQuantum(quantum);
             QuantumList.get(i).setQuantum(quantum);
         }
-        System.out.println("Quantum History:");
+
         printQuantumList(QuantumList);
 
         currPro = processesCopy.get(0);
         currentTime = currPro.getArrivalTime();
         processesCopy.remove(currPro);
         boolean cont = false;
+        System.out.println("Quantum History:");
         while (!readyQueue.isEmpty() || !processesCopy.isEmpty() || cont) {
-
 
             // Add processes that have arrived at the current time to the ready queue
             isReady(processesCopy, currentTime, readyQueue);
-
-
-
             executionMap.putIfAbsent(currPro, new ArrayList<>());
             executionMap.get(currPro).add(new ArrayList<>());
             executionMap.get(currPro).get(executionMap.get(currPro).size() - 1).add(currentTime);
@@ -86,13 +101,14 @@ public class RR implements Scheduler {
                 //scenario 3
                 if(currPro.getRemainingTime() == 0)
                 {
-                    currPro.setQuantum(0);
-                    QuantumList.get(QuantumList.indexOf(currPro)).setQuantum(0);
+                    int updateQuantum = 0;
+                    int indexOfCurr = search(currPro, QuantumList);
+                    currPro.setQuantum(updateQuantum);
+                    QuantumList.get(indexOfCurr).setQuantum(updateQuantum);
                     printQuantumList(QuantumList);
                     currPro.setTurnaroundTime(currentTime - currPro.getArrivalTime());
                     currPro.setWaitingTime(currPro.getTurnaroundTime() - currPro.getBrustTime());
                     results.add(currPro);
-                    //exOrder.add(currPro.getName());
                     currPro = readyQueue.poll();
                     if (currPro != null) {
                         break;
@@ -109,12 +125,13 @@ public class RR implements Scheduler {
                 //scenario 1
                 if (ReaminingQuantum + ceilQuantum == currPro.getQuantum()) {
                     int mean = MeanQuantum(processesCopy, readyQueue, processes.size());
-                    currPro.setQuantum(currPro.getQuantum() + mean);
-                    QuantumList.get(QuantumList.indexOf(currPro)).setQuantum(currPro.getQuantum() + mean);
+                    int updateQuantum = mean + currPro.getQuantum();
+                    int indexOfCurr = search(currPro, QuantumList);
+                    currPro.setQuantum(updateQuantum);
+                    QuantumList.get(indexOfCurr).setQuantum(updateQuantum);
                     printQuantumList(QuantumList);
                     readyQueue.add(currPro);
                     currPro = readyQueue.poll();
-                    //exOrder.add(currPro.getName());
                     break;
                 }
 
@@ -130,13 +147,14 @@ public class RR implements Scheduler {
                     }
                     if (nextProcess != currPro) {
                         int unusedQuantum = currPro.getQuantum() - (ReaminingQuantum + ceilQuantum);
-                        currPro.setQuantum(unusedQuantum + currPro.getQuantum());
-                        QuantumList.get(QuantumList.indexOf(currPro)).setQuantum(unusedQuantum + currPro.getQuantum());
+                        int updateQuantum = unusedQuantum + currPro.getQuantum();
+                        int indexOfCurr = search(currPro, QuantumList);
+                        currPro.setQuantum(updateQuantum);
+                        QuantumList.get(indexOfCurr).setQuantum(updateQuantum);
                         printQuantumList(QuantumList);
                         readyQueue.add(currPro);
                         readyQueue.remove(nextProcess);
                         currPro = nextProcess;
-                        //exOrder.add(nextProcess.getName());
                         currentTime += csTime;
                         break;
                     }
@@ -160,19 +178,19 @@ public class RR implements Scheduler {
                 cont = false;
             }
         }
-        // Display Execution Order
+    
         System.out.println("Execution Order:");
         for (String string : exOrder) {
             System.out.print(string + " ");
         }
-        // Display waiting times for each process
+
         System.out.println("\nWaiting Times for Each Process:");
         for (Process p : results) {
             System.out.println(p.getName() + ": " + p.getWaitingTime());
             scheduleData.totalWait += p.getWaitingTime();
         }
 
-        // Calculate turnaround time for each process
+
         System.out.println("Turnaround Time for Each Process:");
         for (Process p : results) {
             System.out.println(p.getName() + ": " + p.getTurnaroundTime());
@@ -185,11 +203,10 @@ public class RR implements Scheduler {
         System.out.println("Average Waiting Time: " + scheduleData.avgWait);
         System.out.println("Average Turnaround Time: " + scheduleData.avgTurnaround);
 
-        for (int i = 0; i < processes.size(); i++) {
-            int agFactor = calculateAGFactor(processes.get(i));
-            System.out.println("AG-Factor for " + processes.get(i).getName() + ": " + agFactor);
+        for (int i = 0; i < results.size(); i++) {
+            int agFactor = results.get(i).getAGFactor();
+            System.out.println("AG-Factor for " + results.get(i).getName() + ": " + agFactor);
         }
-        scheduleData.executionMap = executionMap;
         return scheduleData;
     }
 
@@ -197,7 +214,7 @@ public class RR implements Scheduler {
         for (Process p: quantumList) {
             System.out.println(p.getName() + " " + p.getQuantum());
         }
-        System.out.println("***************");
+        System.out.println("*****");
     }
 
 
@@ -212,20 +229,6 @@ public class RR implements Scheduler {
         for (Process p : temp) {
             processesCopy.remove(p);
         }
-    }
-
-    private int calculateAGFactor(Process process) {
-        int priority = process.getPriority();
-        int randomFunction = (int) (Math.random() * 20);
-        int agFactor;
-        if (randomFunction < 10) {
-            agFactor = randomFunction + process.getArrivalTime() + process.getBrustTime();
-        } else if (randomFunction > 10) {
-            agFactor = 10 + process.getArrivalTime() + process.getBrustTime();
-        } else {
-            agFactor = priority + process.getArrivalTime() + process.getBrustTime();
-        }
-        return agFactor;
     }
 
     private int MeanQuantum(List<Process> processesCopy ,Queue<Process> readyQueue,int number_of_processes)
