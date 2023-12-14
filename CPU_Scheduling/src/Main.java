@@ -8,9 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
-
 import static java.lang.System.exit;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -18,21 +16,30 @@ import java.io.IOException;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+
+/* Authors: Seifeldeen Mohamed Ahmed Mohamed(20210168)
+ *          Yousef Emadeldeen Ali(20210479)
+ *          Yousef Karam(20210480)
+ *          Noha Mohamed Abdelkader(20210452)
+ *          Esraa Ahmed Saad Mubarak(20210062)
+*/
+
+
 public class Main {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
-        // ______________________________________________________________________
+        // ________________________
         // Testing variables
         int number_of_processes;
         int switching_time;
         int choice_of_algo;
-        // ______________________________________________________________________
+        // ________________________
         // Process variables
         String p_name;
         int p_arrivalTime;
         int p_brustTime;
         int p_priority;
-        // // ______________________________________________________________________
+        //______________________________________________________________________
         System.out.println("What is the number of processes?");
         number_of_processes = input.nextInt();
 
@@ -105,13 +112,13 @@ public class Main {
                 default:
                     System.out.println("Invalid choice try again!");
             }
-            // FileManager.write("GUI\\src\\DB\\schedule.json", data.parse());
+            //FileManager.write("GUI\\src\\DB\\schedule.json", data.parse());
         }
-        // ______________________________________________________________________
+        // ________________________
     }
 }
 
-// *********************************************************************
+// ***********************
 class Process {
     private String name;
     private float color;
@@ -134,7 +141,7 @@ class Process {
     }
 
     private int AGFactor = 0;
-    // ________________________
+    // ________
 
     public String getName() {
         return name;
@@ -208,7 +215,7 @@ class Process {
         return this.quantum;
     }
 
-    // ________________________
+    // ________
     public Process(String name, float color, int arrivalTime, int brustTime, int priority) {
         this.name = name;
         this.color = color;
@@ -219,7 +226,7 @@ class Process {
     }
 }
 
-// *********************************************************************
+// ***********************
 class ScheduleData {
     public int totalWait = 0;
     public int totalTurnaround = 0;
@@ -249,12 +256,12 @@ class ScheduleData {
     }
 }
 
-// *********************************************************************
+// ***********************
 interface Scheduler {
     ScheduleData schedule(List<Process> processes, int csTime);
 }
 
-// *********************************************************************
+// ***********************
 class SJF implements Scheduler {
     @Override
     public ScheduleData schedule(List<Process> processes, int csTime) {
@@ -276,7 +283,7 @@ class SJF implements Scheduler {
                     }
                 }
             }
-            // _______________________________________________
+            // _________________
             if (!currprocesses.isEmpty()) {
                 currprocesses.sort(Comparator.comparingLong(p -> p.getBrustTime()));
                 currentProcess = currprocesses.get(0);
@@ -327,7 +334,7 @@ class SJF implements Scheduler {
     }
 }
 
-// *********************************************************************
+// ***********************
 class SRTF implements Scheduler {
 
     @Override
@@ -409,7 +416,7 @@ class SRTF implements Scheduler {
     }
 }
 
-// *********************************************************************
+// ***********************
 class RR implements Scheduler {
     private int quantum;
     private Process currPro;
@@ -423,10 +430,28 @@ class RR implements Scheduler {
         return quantum;
     }
 
+    private List<Process> makeCopy(List<Process> toBeCopied){
+        List<Process> copy = new ArrayList<>();
+        for (Process p:toBeCopied){
+            Process temp = new Process(p.getName(), p.getColor(), p.getArrivalTime(), p.getBrustTime(), p.getPriority());
+            copy.add(temp);
+        }
+        return copy;
+    }
+
+    private int search(Process p, List<Process> list){
+        for (int i = 0; i < list.size(); i++) {
+            if (p.getName().equals(list.get(i).getName())){
+                return i;
+            }
+        }
+        return -1;
+    }
+
     @Override
     public ScheduleData schedule(List<Process> processes, int csTime) {
-        List<Process> processesCopy = new ArrayList<>(processes);
-        List<Process> QuantumList = new ArrayList<>(processes);
+        List<Process> processesCopy = makeCopy(processes);
+        List<Process> QuantumList = makeCopy(processesCopy);
         Queue<Process> readyQueue = new LinkedList<>();
         List<Integer> remainingTime = new ArrayList<>();
         List<Process> results = new ArrayList<>();
@@ -451,22 +476,22 @@ class RR implements Scheduler {
             p.setAGFactor(agFactor);
         }
 
-        for (int i = 0; i < processes.size(); i++) {
+        for (int i=0; i<processes.size(); i++) {
             processesCopy.get(i).setQuantum(quantum);
             QuantumList.get(i).setQuantum(quantum);
         }
-        System.out.println("Quantum History:");
+
         printQuantumList(QuantumList);
 
         currPro = processesCopy.get(0);
         currentTime = currPro.getArrivalTime();
         processesCopy.remove(currPro);
         boolean cont = false;
+        System.out.println("Quantum History:");
         while (!readyQueue.isEmpty() || !processesCopy.isEmpty() || cont) {
 
             // Add processes that have arrived at the current time to the ready queue
             isReady(processesCopy, currentTime, readyQueue);
-
             executionMap.putIfAbsent(currPro, new ArrayList<>());
             executionMap.get(currPro).add(new ArrayList<>());
             executionMap.get(currPro).get(executionMap.get(currPro).size() - 1).add(currentTime);
@@ -486,39 +511,45 @@ class RR implements Scheduler {
             while (true) {
                 isReady(processesCopy, currentTime, readyQueue);
 
-                // scenario 3
-                if (currPro.getRemainingTime() == 0) {
-                    currPro.setQuantum(0);
-                    QuantumList.get(QuantumList.indexOf(currPro)).setQuantum(0);
+                //scenario 3
+                if(currPro.getRemainingTime() == 0)
+                {
+                    int updateQuantum = 0;
+                    int indexOfCurr = search(currPro, QuantumList);
+                    currPro.setQuantum(updateQuantum);
+                    QuantumList.get(indexOfCurr).setQuantum(updateQuantum);
                     printQuantumList(QuantumList);
                     currPro.setTurnaroundTime(currentTime - currPro.getArrivalTime());
                     currPro.setWaitingTime(currPro.getTurnaroundTime() - currPro.getBrustTime());
                     results.add(currPro);
-                    // exOrder.add(currPro.getName());
                     currPro = readyQueue.poll();
                     if (currPro != null) {
                         break;
-                    } else if (results.size() == processes.size()) {
+                    }
+                    else if (results.size() == processes.size()) {
                         break;
-                    } else {
+                    }
+                    else{
                         currPro = processesCopy.get(0);
                         currentTime = currPro.getArrivalTime();
                         break;
                     }
                 }
-                // scenario 1
+                //scenario 1
                 if (ReaminingQuantum + ceilQuantum == currPro.getQuantum()) {
                     int mean = MeanQuantum(processesCopy, readyQueue, processes.size());
-                    currPro.setQuantum(currPro.getQuantum() + mean);
-                    QuantumList.get(QuantumList.indexOf(currPro)).setQuantum(currPro.getQuantum() + mean);
+                    int updateQuantum = mean + currPro.getQuantum();
+                    int indexOfCurr = search(currPro, QuantumList);
+                    currPro.setQuantum(updateQuantum);
+                    QuantumList.get(indexOfCurr).setQuantum(updateQuantum);
                     printQuantumList(QuantumList);
                     readyQueue.add(currPro);
                     currPro = readyQueue.poll();
-                    // exOrder.add(currPro.getName());
                     break;
                 }
 
-                // scenario 2
+
+                //scenario 2
                 if (!readyQueue.isEmpty()) {
                     Process nextProcess = currPro;
                     for (Process p : readyQueue) {
@@ -529,25 +560,27 @@ class RR implements Scheduler {
                     }
                     if (nextProcess != currPro) {
                         int unusedQuantum = currPro.getQuantum() - (ReaminingQuantum + ceilQuantum);
-                        currPro.setQuantum(unusedQuantum + currPro.getQuantum());
-                        QuantumList.get(QuantumList.indexOf(currPro)).setQuantum(unusedQuantum + currPro.getQuantum());
+                        int updateQuantum = unusedQuantum + currPro.getQuantum();
+                        int indexOfCurr = search(currPro, QuantumList);
+                        currPro.setQuantum(updateQuantum);
+                        QuantumList.get(indexOfCurr).setQuantum(updateQuantum);
                         printQuantumList(QuantumList);
                         readyQueue.add(currPro);
                         readyQueue.remove(nextProcess);
                         currPro = nextProcess;
-                        // exOrder.add(nextProcess.getName());
                         currentTime += csTime;
                         break;
                     }
                 }
-                currentTime++;
+                currentTime ++;
                 ReaminingQuantum++;
                 currPro.setRemainingTime(currPro.getRemainingTime() - 1);
             }
             if (readyQueue.isEmpty() && processesCopy.isEmpty() && currPro != null) {
                 if (currPro.getRemainingTime() > 0) {
                     cont = true;
-                } else {
+                }
+                else {
                     cont = false;
                     currPro.setTurnaroundTime(currentTime - currPro.getArrivalTime());
                     currPro.setWaitingTime(currPro.getTurnaroundTime() - currPro.getBrustTime());
@@ -558,19 +591,19 @@ class RR implements Scheduler {
                 cont = false;
             }
         }
-        // Display Execution Order
+    
         System.out.println("Execution Order:");
         for (String string : exOrder) {
             System.out.print(string + " ");
         }
-        // Display waiting times for each process
+
         System.out.println("\nWaiting Times for Each Process:");
         for (Process p : results) {
             System.out.println(p.getName() + ": " + p.getWaitingTime());
             scheduleData.totalWait += p.getWaitingTime();
         }
 
-        // Calculate turnaround time for each process
+
         System.out.println("Turnaround Time for Each Process:");
         for (Process p : results) {
             System.out.println(p.getName() + ": " + p.getTurnaroundTime());
@@ -583,20 +616,20 @@ class RR implements Scheduler {
         System.out.println("Average Waiting Time: " + scheduleData.avgWait);
         System.out.println("Average Turnaround Time: " + scheduleData.avgTurnaround);
 
-        for (int i = 0; i < processes.size(); i++) {
-            int agFactor = calculateAGFactor(processes.get(i));
-            System.out.println("AG-Factor for " + processes.get(i).getName() + ": " + agFactor);
+        for (int i = 0; i < results.size(); i++) {
+            int agFactor = results.get(i).getAGFactor();
+            System.out.println("AG-Factor for " + results.get(i).getName() + ": " + agFactor);
         }
-        scheduleData.executionMap = executionMap;
         return scheduleData;
     }
 
     private void printQuantumList(List<Process> quantumList) {
-        for (Process p : quantumList) {
+        for (Process p: quantumList) {
             System.out.println(p.getName() + " " + p.getQuantum());
         }
-        System.out.println("***************");
+        System.out.println("*****");
     }
+
 
     public void isReady(List<Process> processesCopy, int currentTime, Queue<Process> readyQueue) {
         List<Process> temp = new ArrayList<>();
@@ -611,21 +644,8 @@ class RR implements Scheduler {
         }
     }
 
-    private int calculateAGFactor(Process process) {
-        int priority = process.getPriority();
-        int randomFunction = (int) (Math.random() * 20);
-        int agFactor;
-        if (randomFunction < 10) {
-            agFactor = randomFunction + process.getArrivalTime() + process.getBrustTime();
-        } else if (randomFunction > 10) {
-            agFactor = 10 + process.getArrivalTime() + process.getBrustTime();
-        } else {
-            agFactor = priority + process.getArrivalTime() + process.getBrustTime();
-        }
-        return agFactor;
-    }
-
-    private int MeanQuantum(List<Process> processesCopy, Queue<Process> readyQueue, int number_of_processes) {
+    private int MeanQuantum(List<Process> processesCopy ,Queue<Process> readyQueue,int number_of_processes)
+    {
         int sum = 0;
         for (Process p : processesCopy) {
             sum += p.getQuantum();
@@ -634,11 +654,11 @@ class RR implements Scheduler {
             sum += p.getQuantum();
         }
         sum += currPro.getQuantum();
-        return (int) Math.ceil((sum / number_of_processes) * 0.1);
+        return (int)Math.ceil((sum / number_of_processes) * 0.1) ;
     }
 }
 
-// *********************************************************************
+// ***********************
 class PriorityScheduler implements Scheduler {
     // used to create a process priority Comparator object for priorty queue
     private int processComparatorByPriority(Process first, Process second) {
@@ -725,7 +745,7 @@ class PriorityScheduler implements Scheduler {
     }
 }
 
-// *********************************************************************
+// ***********************
 class FileManager {
     public static String read(String fileName) {
         String data = "";
