@@ -46,7 +46,6 @@ public class Main {
             OriginalProcesses.add(new Process(p_name, (float) i / number_of_processes,p_arrivalTime, p_brustTime, p_priority));
             System.out.println("-------------------------------------------");
         }
-
         while (true) {
             ArrayList<Process> processes = new ArrayList<>();
             for (Process p : OriginalProcesses) {
@@ -86,12 +85,13 @@ public class Main {
                     break;
 
                 case 5:
+                    System.out.println("Good Bye :)");
                     exit(0);
                     break;
                 default:
                     System.out.println("Invalid choice try again!");
             }
-            FileManager.write("CPU_Scheduling\\GUI\\src\\DB\\schedule.json",data.parse());
+            FileManager.write("C:\\Users\\Seif\\Desktop\\CPU-Scheduling\\CPU_Scheduling\\GUI\\src\\DB\\schedule.json",data.parse());
         }
         // ______________________________________________________________________
     }

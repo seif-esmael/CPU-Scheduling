@@ -20,6 +20,7 @@ public class RR implements Scheduler {
     @Override
     public ScheduleData schedule(List<Process> processes, int csTime) {
         List<Process> processesCopy = new ArrayList<>(processes);
+        List<Process> QuantumList = new ArrayList<>(processes);
         Queue<Process> readyQueue = new LinkedList<>();
         List<Integer> remainingTime = new ArrayList<>();
         List<Process> results = new ArrayList<>();
@@ -31,79 +32,136 @@ public class RR implements Scheduler {
         }
 
         int currentTime = 0;
+        for (Process p : processesCopy) {
+            int randomFunction = (int) (Math.random() * 20);
+            int agFactor;
+            if (randomFunction < 10) {
+                agFactor = randomFunction + p.getArrivalTime() + p.getBrustTime();
+            } else if (randomFunction > 10) {
+                agFactor = 10 + p.getArrivalTime() + p.getBrustTime();
+            } else {
+                agFactor = p.getPriority() + p.getArrivalTime() + p.getBrustTime();
+            }
+            p.setAGFactor(agFactor);
+        }
 
-        processesCopy.sort(Comparator.comparingLong(p -> p.getArrivalTime()));
+        for (int i=0; i<processes.size(); i++) {
+            processesCopy.get(i).setQuantum(quantum);
+            QuantumList.get(i).setQuantum(quantum);
+        }
+        System.out.println("Quantum History:");
+        printQuantumList(QuantumList);
+
         currPro = processesCopy.get(0);
         currentTime = currPro.getArrivalTime();
         processesCopy.remove(currPro);
         boolean cont = false;
-        System.out.println("Execution Order:");
         while (!readyQueue.isEmpty() || !processesCopy.isEmpty() || cont) {
+
+
             // Add processes that have arrived at the current time to the ready queue
             isReady(processesCopy, currentTime, readyQueue);
+
+
+
             executionMap.putIfAbsent(currPro, new ArrayList<>());
             executionMap.get(currPro).add(new ArrayList<>());
             executionMap.get(currPro).get(executionMap.get(currPro).size() - 1).add(currentTime);
+            exOrder.add(currPro.getName());
+            int ceilQuantum = (int) Math.ceil(0.5 * currPro.getQuantum());
+            if (currPro.getRemainingTime() - ceilQuantum > 0) {
 
-            if (currPro.getRemainingTime() - quantum > 0) {
-                currPro.setRemainingTime(currPro.getRemainingTime() - quantum);
-                currentTime += quantum;
+                currPro.setRemainingTime(currPro.getRemainingTime() - ceilQuantum);
+                currentTime += ceilQuantum;
             } else {
                 currentTime += currPro.getRemainingTime();
                 currPro.setRemainingTime(0);
             }
-
             executionMap.get(currPro).get(executionMap.get(currPro).size() - 1).add(currentTime);
-            isReady(processesCopy, currentTime, readyQueue);
-            if (!readyQueue.isEmpty()) {
-                Process oldPro = currPro;
-                currPro = readyQueue.poll(); // p1
-                int remainingNonPreemptiveTime = (int) Math.ceil(0.5 * quantum);
-            if (currPro.getRemainingTime() <= remainingNonPreemptiveTime) {
-                currPro.setRemainingTime(0);
-                currentTime += currPro.getRemainingTime();
-            } else {
-                currPro.setRemainingTime(currPro.getRemainingTime() - remainingNonPreemptiveTime);
-                currentTime += remainingNonPreemptiveTime;
 
-                // Convert to preemptive AG
-                while (!readyQueue.isEmpty()) {
-                    Process oldPro = currPro;
+            int ReaminingQuantum = 0;
+            while (true) {
+                isReady(processesCopy, currentTime, readyQueue);
+
+                //scenario 3
+                if(currPro.getRemainingTime() == 0)
+                {
+                    currPro.setQuantum(0);
+                    QuantumList.get(QuantumList.indexOf(currPro)).setQuantum(0);
+                    printQuantumList(QuantumList);
+                    currPro.setTurnaroundTime(currentTime - currPro.getArrivalTime());
+                    currPro.setWaitingTime(currPro.getTurnaroundTime() - currPro.getBrustTime());
+                    results.add(currPro);
+                    //exOrder.add(currPro.getName());
                     currPro = readyQueue.poll();
-                    if (oldPro.getRemainingTime() > 0) {
-                        readyQueue.add(oldPro);
-                        break; // Break the loop to allow non-preemptive AG for other processes
-                    } else {
-                        oldPro.setTurnaroundTime(currentTime - oldPro.getArrivalTime());
-                        oldPro.setWaitingTime(oldPro.getTurnaroundTime() - oldPro.getBrustTime());
-                        results.add(oldPro);
+                    if (currPro != null) {
+                        break;
                     }
-                    exOrder.add(oldPro.getName());
-                    currentTime += csTime;
+                    else if (results.size() == processes.size()) {
+                        break;
+                    }
+                    else{
+                        currPro = processesCopy.get(0);
+                        currentTime = currPro.getArrivalTime();
+                        break;
+                    }
                 }
-            }
-if (currPro.getRemainingTime() > 0) {
-                if (currPro.getRemainingTime() == quantum) {
-                    // Scenario i: Process used all its quantum time but still has job to do
+                //scenario 1
+                if (ReaminingQuantum + ceilQuantum == currPro.getQuantum()) {
+                    int mean = MeanQuantum(processesCopy, readyQueue, processes.size());
+                    currPro.setQuantum(currPro.getQuantum() + mean);
+                    QuantumList.get(QuantumList.indexOf(currPro)).setQuantum(currPro.getQuantum() + mean);
+                    printQuantumList(QuantumList);
                     readyQueue.add(currPro);
-                    int newQuantum = (int) Math.ceil(1.1 * quantum); // Increase quantum time
-                    currPro.setQuantum(newQuantum);
-                } else {
-                    // Scenario ii: Process didn't use all its quantum time
-                    readyQueue.add(currPro);
-                    int remainingUnusedTime = quantum - currPro.getRemainingTime();
-                    currPro.setQuantum(currPro.getQuantum() + remainingUnusedTime);
+                    currPro = readyQueue.poll();
+                    //exOrder.add(currPro.getName());
+                    break;
                 }
-            } else {
-                // Scenario iii: Process finished its job
-                currPro.setQuantum(0);
-                readyQueue.remove(currPro);
-                currPro.setTurnaroundTime(currentTime - currPro.getArrivalTime());
-                currPro.setWaitingTime(currPro.getTurnaroundTime() - currPro.getBrustTime());
-                results.add(currPro);
-                exOrder.add(currPro.getName());
+
+
+                //scenario 2
+                if (!readyQueue.isEmpty()) {
+                    Process nextProcess = currPro;
+                    for (Process p : readyQueue) {
+                        if (p.getAGFactor() < nextProcess.getAGFactor()) {
+                            nextProcess = p;
+                        }
+
+                    }
+                    if (nextProcess != currPro) {
+                        int unusedQuantum = currPro.getQuantum() - (ReaminingQuantum + ceilQuantum);
+                        currPro.setQuantum(unusedQuantum + currPro.getQuantum());
+                        QuantumList.get(QuantumList.indexOf(currPro)).setQuantum(unusedQuantum + currPro.getQuantum());
+                        printQuantumList(QuantumList);
+                        readyQueue.add(currPro);
+                        readyQueue.remove(nextProcess);
+                        currPro = nextProcess;
+                        //exOrder.add(nextProcess.getName());
+                        currentTime += csTime;
+                        break;
+                    }
+                }
+                currentTime ++;
+                ReaminingQuantum++;
+                currPro.setRemainingTime(currPro.getRemainingTime() - 1);
             }
-            
+            if (readyQueue.isEmpty() && processesCopy.isEmpty() && currPro != null) {
+                if (currPro.getRemainingTime() > 0) {
+                    cont = true;
+                }
+                else {
+                    cont = false;
+                    currPro.setTurnaroundTime(currentTime - currPro.getArrivalTime());
+                    currPro.setWaitingTime(currPro.getTurnaroundTime() - currPro.getBrustTime());
+                    results.add(currPro);
+                    exOrder.add(currPro.getName());
+                }
+            } else if (currPro == null) {
+                cont = false;
+            }
+        }
+        // Display Execution Order
+        System.out.println("Execution Order:");
         for (String string : exOrder) {
             System.out.print(string + " ");
         }
@@ -124,8 +182,6 @@ if (currPro.getRemainingTime() > 0) {
         scheduleData.avgWait = (double) scheduleData.totalWait / processes.size();
         scheduleData.avgTurnaround = (double) scheduleData.totalTurnaround / processes.size();
         scheduleData.executionMap = executionMap;
-        System.out.println("Total Waiting Time: " + scheduleData.totalWait);
-        System.out.println("Total Turnaround Time: " + scheduleData.totalTurnaround);
         System.out.println("Average Waiting Time: " + scheduleData.avgWait);
         System.out.println("Average Turnaround Time: " + scheduleData.avgTurnaround);
 
@@ -133,19 +189,17 @@ if (currPro.getRemainingTime() > 0) {
             int agFactor = calculateAGFactor(processes.get(i));
             System.out.println("AG-Factor for " + processes.get(i).getName() + ": " + agFactor);
         }
+        scheduleData.executionMap = executionMap;
         return scheduleData;
     }
 
-    
-
-    private boolean isAnyProcessRemaining(List<Integer> burstTimes) {
-        for (int burstTime : burstTimes) {
-            if (burstTime > 0) {
-                return true;
-            }
+    private void printQuantumList(List<Process> quantumList) {
+        for (Process p: quantumList) {
+            System.out.println(p.getName() + " " + p.getQuantum());
         }
-        return false;
+        System.out.println("***************");
     }
+
 
     public void isReady(List<Process> processesCopy, int currentTime, Queue<Process> readyQueue) {
         List<Process> temp = new ArrayList<>();
@@ -172,5 +226,18 @@ if (currPro.getRemainingTime() > 0) {
             agFactor = priority + process.getArrivalTime() + process.getBrustTime();
         }
         return agFactor;
+    }
+
+    private int MeanQuantum(List<Process> processesCopy ,Queue<Process> readyQueue,int number_of_processes)
+    {
+        int sum = 0;
+        for (Process p : processesCopy) {
+            sum += p.getQuantum();
+        }
+        for (Process p : readyQueue) {
+            sum += p.getQuantum();
+        }
+        sum += currPro.getQuantum();
+        return (int)Math.ceil((sum / number_of_processes) * 0.1) ;
     }
 }

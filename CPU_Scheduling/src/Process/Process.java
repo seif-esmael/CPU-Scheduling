@@ -7,12 +7,22 @@ public class Process {
     private int brustTime;
     private int remainingTime;
     private int priority;
-
+    private int quantum;
     private int waitingTime;
     private int turnaroundTime;
     private int completionTime;
     boolean completed = false;
-    // ______________________________________________________________________
+
+    public int getAGFactor() {
+        return AGFactor;
+    }
+
+    public void setAGFactor(int AGFactor) {
+        this.AGFactor = AGFactor;
+    }
+
+    private int AGFactor = 0;
+    // ________________________
 
     public String getName() {
         return name;
@@ -80,7 +90,17 @@ public class Process {
         return this.completed;
     }
 
-    // ______________________________________________________________________
+    public void setQuantum(int quantum)
+    {
+        this.quantum = quantum;
+    }
+
+    public int getQuantum()
+    {
+        return this.quantum;
+    }
+
+    // ________________________
     public Process(String name, float color, int arrivalTime, int brustTime, int priority) {
         this.name = name;
         this.color = color;
