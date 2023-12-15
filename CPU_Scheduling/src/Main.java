@@ -735,6 +735,16 @@ class PriorityScheduler implements Scheduler {
         for (int i = 0; i < processes.size(); i++)
             processes.get(i).setPriority(processesPriority.get(i));
 
+        System.out.println("Average Waiting time for:");
+        for (Process p : processes) {
+            System.out.println(p.getName() + ": " + p.getWaitingTime());
+        }
+
+        System.out.println("Average Turnaround time for:");
+        for (Process p : processes) {
+            System.out.println(p.getName() + ": " + p.getTurnaroundTime());
+        }
+
         scheduleData.avgWait = (double) scheduleData.totalWait / processes.size();
         scheduleData.avgTurnaround = (double) scheduleData.totalTurnaround / processes.size();
         System.out.println("Average Waiting Time: " + scheduleData.avgWait);
