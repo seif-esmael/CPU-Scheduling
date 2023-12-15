@@ -17,20 +17,15 @@ public class PriorityScheduler implements Scheduler {
     }
 
     // returns a priorty queue with processes' priorty reduced by one
-    public AbstractQueue<Process> reducePriority(AbstractQueue<Process> oldPriorityQueue) {
-        AbstractQueue<Process> pq = new PriorityQueue<>(this::processComparatorByPriority);
-        while (!oldPriorityQueue.isEmpty()) {
-            Process topProcess = oldPriorityQueue.remove();
-            topProcess.setPriority(topProcess.getPriority() - 1);
-            pq.add(topProcess);
-        }
-        return pq;
+    public void increasePriority(AbstractQueue<Process> pq) {
+        pq.forEach(process -> process.setPriority(Math.max(process.getPriority() - 1, 0)));
 
     }
 
     @Override
     public ScheduleData schedule(List<Process> processes, int csTime) {
         // instantiates a pq with the priorty comparator
+        processes.sort((p1, p2) -> p1.getArrivalTime() - p2.getArrivalTime());
         AbstractQueue<Process> pq = new PriorityQueue<>(this::processComparatorByPriority);
         List<Integer> processesPriority = new ArrayList<>();
         for (Process process : processes)
@@ -50,6 +45,7 @@ public class PriorityScheduler implements Scheduler {
                 // adds processes that have arrived to the pq
                 // if no proccesses have arrived it breaks out of the loop
                 if (processes.get(j).getArrivalTime() <= timer) {
+                    increasePriority(pq);
                     pq.add(processes.get(j));
                     i++;
                 } else
@@ -75,7 +71,6 @@ public class PriorityScheduler implements Scheduler {
                 timer += currentProcess.getBrustTime();
                 currentProcess.setTurnaroundTime(timer - currentProcess.getArrivalTime());
                 currentProcess.setWaitingTime(currentProcess.getTurnaroundTime() - currentProcess.getBrustTime());
-                pq = reducePriority(pq);
 
                 scheduleData.totalWait += currentProcess.getWaitingTime();
                 scheduleData.totalTurnaround += currentProcess.getTurnaroundTime();
@@ -83,6 +78,7 @@ public class PriorityScheduler implements Scheduler {
                 timer++;
 
         }
+
         for (int i = 0; i < processes.size(); i++)
             processes.get(i).setPriority(processesPriority.get(i));
 
