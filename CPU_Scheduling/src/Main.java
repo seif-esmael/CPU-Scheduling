@@ -6,6 +6,13 @@ import java.util.Scanner;
 import FileManager.FileManager;
 import Scheduler.*;
 
+/* Authors: Seifeldeen Mohamed Ahmed Mohamed (20210168)
+ *          Yousef Emadeldeen Ali (20210479)
+ *          Yousef Karam (20210480)
+ *          Noha Mohamed Abdelkader (20210452)
+ *          Esraa Ahmed Saad Mubarak (20210062)
+ */
+
 public class Main {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
@@ -91,7 +98,7 @@ public class Main {
                 default:
                     System.out.println("Invalid choice try again!");
             }
-            FileManager.write("C:\\Users\\Seif\\Desktop\\CPU-Scheduling\\CPU_Scheduling\\GUI\\src\\DB\\schedule.json",data.parse());
+            FileManager.write("CPU_Scheduling\\GUI\\src\\DB\\schedule.json",data.parse());
         }
         // ______________________________________________________________________
     }
